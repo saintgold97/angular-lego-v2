@@ -1,0 +1,36 @@
+.footer {
+  background-color: #f5f5f5;
+  padding: 20px 0;
+
+  .list-card {
+    padding: 20px;
+
+    .footer-subtitle {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .footer-text {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        color: #333;
+      }
+
+      .bi {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .text-center {
+    margin-top: 20px;
+    color: #999;
+    font-size: 13px;
+  }
+}

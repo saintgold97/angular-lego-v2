@@ -1,0 +1,101 @@
+.section-favorites {
+  height: 100%;
+
+  .favorites-container {
+    padding: 32px 0;
+
+    .row {
+      gap: 8px;
+
+      @media screen and (min-width: 768px) {
+        gap: 0;
+      }
+    }
+
+    .card-content {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(3.5px);
+      -webkit-backdrop-filter: blur(3.5px);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: none;
+    }
+  }
+}
+
+.box-detail .card-img-top {
+  width: 170px;
+}
+
+.card-body h2 {
+  border-bottom: 2px solid;
+}
+
+.card-body p {
+  font-family: "sans-serif";
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.details-title {
+  font-size: 60px;
+  font-weight: bold;
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.position-text {
+  flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+  .position-text {
+    flex-direction: row;
+  }
+}
+
+.box-detail .card {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(3.5px);
+  -webkit-backdrop-filter: blur(3.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-bottom: 10px;
+}
+
+.box-detail .card-img-top {
+  width: 240px;
+}
+
+.favorite-empty {
+  img {
+    padding: 1rem;
+    border-radius: 2rem;
+  }
+}
+
+.buttonCard {
+  background: rgb(181 28 208 / 65%);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(7.5px);
+  -webkit-backdrop-filter: blur(7.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: white;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgb(181, 28, 208, 0.85);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.57);
+  }
+}

@@ -1,0 +1,65 @@
+<div class="sidebar-container">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <i class="bi" [ngClass]="isSidebarOpen ? 'bi-x-lg' : 'bi-list'"></i>
+  </button>
+
+  <div class="sidebar" [class.active]="isSidebarOpen">
+    <div class="menu">
+      <h2 class="menu-title">Dashboard</h2>
+      <ul class="menu-list">
+        <li class="list-item">
+          <a routerLink="/home" class="link-item" (click)="isSidebarOpen = false"
+            ><i class="bi bi-house-fill me-2"></i>Home</a
+          >
+        </li>
+        <li class="list-item">
+          <a
+            (click)="setSection(dashboardSectionEnum.PERSONAL_INFO)"
+            class="link-item"
+            [class.active]="activeSection === dashboardSectionEnum.PERSONAL_INFO"
+            [fragment]="dashboardSectionEnum.PERSONAL_INFO"
+            [routerLink]="['/dashboard']"
+          >
+            <i class="bi bi-person-circle me-2"></i>My Profile
+          </a>
+        </li>
+
+        @if ((userRole$ | async) === roles.ADMIN) {
+        <li class="list-item">
+          <a
+            (click)="setSection(dashboardSectionEnum.ADMIN_PANEL)"
+            class="link-item"
+            [class.active]="activeSection === dashboardSectionEnum.ADMIN_PANEL"
+            [fragment]="dashboardSectionEnum.ADMIN_PANEL"
+            [routerLink]="['/dashboard']"
+          >
+            <i class="bi bi-people-fill me-2"></i>Users Management
+          </a>
+        </li>
+        } @if ((userRole$ | async) !== roles.USER) {
+        <li class="list-item">
+          <a
+            (click)="setSection(dashboardSectionEnum.ANALYTICS)"
+            class="link-item"
+            [class.active]="activeSection === dashboardSectionEnum.ANALYTICS"
+            [fragment]="dashboardSectionEnum.ANALYTICS"
+            [routerLink]="['/dashboard']"
+          >
+            <i class="bi bi-graph-up me-2"></i>Analytics
+          </a>
+        </li>
+        }
+
+        <li class="list-item">
+          <button class="btn btn-danger" (click)="signOutHandler()">
+            <i class="bi bi-box-arrow-right"></i>Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      <app-theme-switcher />
+      <div class="info">© 2026 All rights reserved.</div>
+    </div>
+  </div>
+</div>

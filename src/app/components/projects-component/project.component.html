@@ -1,0 +1,42 @@
+<app-navbar />
+<section class="project-section">
+  <app-hero-section title="Explore Our Exciting LEGO Projects"></app-hero-section>
+  
+  <div class="container">
+    <div class="projects-container">
+      
+      @if (projectData$ | async; as projects) {
+        
+        @for (project of projects; track project.id) {
+          @if (project.id) {
+            <div class="project-card glass animate__fadeIn">
+              <div class="project-info">
+                <h3 class="project-title">{{ project.name }}</h3>
+                <p class="project-description">{{ project.description || 'No description available' }}</p>
+                <div class="project-meta">
+                  <p class="project-dates">Start: {{ project.start_date }} - End: {{ project.end_date }}</p>
+                </div>
+                <p class="project-members mt-3">
+                  <strong>Total Members:</strong> {{ project.total }}
+                </p>
+              </div>
+            </div>
+          }
+        } @empty {
+          <div class="col-12 text-center mt-5">
+            <p class="text-muted">No projects found with characters assigned.</p>
+          </div>
+        }
+
+      } @else {
+        <div class="d-flex justify-content-center mt-5">
+          <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</section>
+<app-footer />

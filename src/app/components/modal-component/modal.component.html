@@ -1,0 +1,133 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="legoModal"
+  aria-labelledby="legoModalLabel"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title">{{ editData ? 'Edit character LEGO' : 'New character LEGO' }}</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          #closeModal
+          (click)="closeModalAction()"
+        ></button>
+      </div>
+
+      <form [formGroup]="legoForm" (ngSubmit)="onSubmit()" class="modal-scroll">
+        <div class="modal-body">
+          @if (successMessage) {
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ successMessage }}
+          </div>
+          } @if(errorMessage) {
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorMessage }}
+          </div>
+          }
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" formControlName="name" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" formControlName="lastname" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select class="form-select" id="gender" formControlName="gender" required>
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label">Number Phone</label>
+            <input type="text" class="form-control" formControlName="phone" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <select class="form-select" formControlName="city_id" required>
+              <option value="" disabled>Select City</option>
+              @for (city of cities; track city.id) {
+                <option [value]="city.id">
+                  {{ city.name }} ({{ city.country }})
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="project" class="form-label">Project</label>
+            <select class="form-select" formControlName="project_id" required>
+              <option value="" disabled>Select Project</option>
+              @for (project of projects; track project.id) {
+                <option [value]="project.id">
+                  {{ project.name }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label d-block">Character Picture</label>
+            
+            <div class="mb-2 text-center border rounded p-2 bg-light" style="min-height: 150px;">
+              @if (previewUrl) {
+                <img [src]="previewUrl" class="img-fluid rounded" style="max-height: 140px;" alt="Preview">
+              } @else {
+                <div class="text-muted pt-4">
+                  <i class="bi bi-image" style="font-size: 3rem;"></i>
+                  <p>No image selected</p>
+                </div>
+              }
+            </div>
+          
+            <div class="input-group">
+              <input
+                type="file"
+                class="form-control"
+                id="pictureFile"
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                [disabled]="isUploading"
+              />
+              @if (isUploading) {
+                <span class="input-group-text">
+                  <div class="spinner-border spinner-border-sm text-primary"></div>
+                </span>
+              }
+            </div>
+            
+            <input type="hidden" formControlName="picture">
+            
+            @if (legoForm.get('picture')?.invalid && legoForm.get('picture')?.touched) {
+              <small class="text-danger">Image upload is required.</small>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModalAction()" >Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="legoForm.invalid">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

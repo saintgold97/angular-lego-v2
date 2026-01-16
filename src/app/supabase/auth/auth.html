@@ -1,0 +1,107 @@
+<div class="auth">
+  <div class="auth-container">
+    <div class="container">
+      <div class="row">
+        <div class="card border-0 glass">
+          <div class="card-body">
+            <h1 class="card-title text-secondary display-5">
+              {{ isLogin ? 'Log In' : 'Sign Up' }}
+            </h1>
+
+            <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+              <!-- EMAIL -->
+              <div class="form-floating mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  placeholder="name@example.com"
+                  formControlName="email"
+                />
+                <label class="form-label" for="email">Email</label>
+              </div>
+
+              @if ( authForm.get('email')?.touched && authForm.get('email')?.invalid ) {
+              <div class="text-danger small">Please enter a valid email address</div>
+              }
+
+              <!-- DISPLAY NAME -->
+              @if(!isLogin) {
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="displayName"
+                  placeholder="Display Name"
+                  formControlName="displayName"
+                />
+                <label class="form-label" for="displayName">Display Name</label>
+              </div>
+              }
+
+              <!-- PASSWORD -->
+              <div class="form-floating mb-3">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  placeholder="Password"
+                  formControlName="password"
+                />
+                <label class="form-label" for="password">Password</label>
+              </div>
+
+              @if ( authForm.get('password')?.touched &&
+              authForm.get('password')?.errors?.['minlength'] ) {
+              <div class="text-danger small">Password must be at least 6 characters</div>
+              }
+
+              <!-- CONFIRM PASSWORD (SOLO REGISTER) -->
+              @if (!isLogin) {
+              <div class="form-floating mb-3">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirmPassword"
+                  placeholder="Repeat password"
+                  formControlName="confirmPassword"
+                />
+                <label class="form-label" for="confirmPassword">Repeat password</label>
+              </div>
+
+              @if (passwordMismatch) {
+              <div class="alert alert-danger">Passwords do not match</div>
+              } }
+
+              <!-- ERROR -->
+              @if (errorMessage) {
+              <div class="alert alert-danger text-center" role="alert">
+                {{ errorMessage }}
+              </div>
+              }
+
+              <!-- SUBMIT -->
+              <button
+                type="submit"
+                class="btn btn-warning w-100 my-2"
+                style="height: 60px"
+                [disabled]="authForm.invalid || loading"
+              >
+                {{ loading ? 'Loading…' : isLogin ? 'Log In' : 'Sign Up' }}
+              </button>
+            </form>
+
+            <!-- TOGGLE -->
+            <p class="text-center mt-3">
+              @if (isLogin) { Don't have an account?
+              <a href="#" (click)="toggleMode(); $event.preventDefault()"> Sign up </a>
+              } @else { Already have an account?
+              <a href="#" (click)="toggleMode(); $event.preventDefault()"> Log in </a>
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

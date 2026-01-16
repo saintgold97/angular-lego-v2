@@ -1,0 +1,38 @@
+<app-navbar></app-navbar>
+<section class="section-favorites">
+  <app-hero-section title="Your Favorite Characters"></app-hero-section>
+  @if(favorites) {
+  <section class="favorites-container">
+    <div class="container">
+      <div class="row justify-content-center">
+        @for (favorite of (favorites | async); track favorite.id) {
+        <div class="col-10 col-md-5 col-lg-4">
+          <div class="card-content">
+            <app-single-character
+              [character]="favorite"
+              [showRemoveButton]="true"
+              [showDetailButton]="true"
+              (onRemove)="toggleFavorite($event)"
+            ></app-single-character>
+          </div>
+        </div>
+        } @empty {
+        <div class="card container favorite-empty col-10 col-md-6 mt-5">
+          <img
+            src="https://cdn.dribbble.com/users/12570/screenshots/13987694/media/1635918fab6854e489723a301619b7b2.jpg"
+            alt="Empty"
+          />
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+  } @else {
+  <div class="d-flex justify-content-center mt-5">
+    <div class="spinner-border text-warning" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  }
+</section>
+<app-footer></app-footer>

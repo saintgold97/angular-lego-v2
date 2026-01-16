@@ -1,0 +1,125 @@
+<app-navbar></app-navbar>
+
+@if (character | async; as char) {
+<div class="profile-page">
+  <div class="container">
+    <div class="main-body">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="main-breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
+          <li class="breadcrumb-item"><a routerLink="/characters">Characters</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ char.name }} {{ char.lastname }}
+          </li>
+        </ol>
+      </nav>
+      <!-- /Breadcrumb -->
+
+      <div class="row gutters-sm">
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body card-img-profile">
+              <div class="d-flex flex-column align-items-center text-center">
+                <div class="profile-img">
+                  <img
+                    [src]="char.picture"
+                    alt="Admin"
+                    class="card-img-top rounded-circle"
+                    width="150"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Full Name</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ char.name }} {{ char.lastname }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Email</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ char.email }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Phone</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ char.phone }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Address</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{ char.city.name }} ( {{ char.city.country }} )
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Gender</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ char.gender }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Project</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ char.project.name }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="container-buttons">
+                    <div class="buttons-group">
+                      @if ((userRole$ | async) !== roles.USER) {
+                      <button
+                        type="button"
+                        class="btn btn-primary button-edit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#legoModal"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button class="btn btn-danger button-delete" (click)="deleteCharacter()">
+                        <i class="bi bi-trash-fill trash"></i>
+                      </button>
+                      }
+                    </div>
+                    <button class="btn button-favorite" (click)="toggleFavorite()">
+                      <i [ngClass]="(isFavorite | async) ? 'bi-heart-fill' : 'bi-heart'"
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal [editData]="selectedCharacter" (characterUpdated)="onCharacterUpdated()"></app-modal>
+} @else {
+<div class="d-flex justify-content-center mt-5">
+  <div class="spinner-border text-warning" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+}
+
+<app-footer></app-footer>

@@ -1,0 +1,12 @@
+<button
+  class="theme-btn"
+  (click)="toggleTheme()"
+  [title]="isDarkMode ? 'Switch Light Mode' : 'Switch Dark Mode'"
+>
+  <div class="theme-btn-content">
+    <div class="icon-container" [class.is-dark]="isDarkMode">
+      <i class="bi bi-sun-fill sun-icon"></i>
+      <i class="bi bi-moon-stars-fill moon-icon"></i>
+    </div>
+  </div>
+</button>

@@ -1,0 +1,86 @@
+<app-navbar (characterCreated)="loadCharacters()"></app-navbar>
+<app-hero-section title="Explore LEGO Characters"></app-hero-section>
+
+<!-- SECTION GENDER AND SEARCH NAME -->
+<div class="container-filter">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="lego-input-wrapper">
+          <i class="bi bi-gender-ambiguous input-icon"></i>
+          <select
+            id="genderSelect"
+            class="lego-select"
+            [(ngModel)]="selectedGender"
+            (change)="searchCharactersByGender()"
+          >
+            <option value="" disabled selected>Select Gender</option>
+            <option value="all">All Genders</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="lego-input-wrapper">
+          <i class="bi bi-search input-icon"></i>
+          <input
+            id="searchName"
+            type="text"
+            class="lego-input"
+            [(ngModel)]="searchTerm"
+            (input)="searchCharactersByName()"
+            placeholder="Search by name..."
+          />
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="container-button">
+          @if ((userRole$ | async) !== roles.USER) {
+          <button
+            type="button"
+            class="btn-lego-add"
+            data-bs-toggle="modal"
+            data-bs-target="#legoModal"
+          >
+            <span class="btn-content"> <i class="bi bi-plus-lg"></i>Add Character </span>
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION CHARACTERS -->
+<section class="characters-section animate__fadeIn">
+  <div class="container-chars">
+    <div class="container">
+      <div class="row justify-content-center">
+        @if (characters$ | async; as characterList) { @for (character of characterList; track
+        character.id) {
+        <div class="col-10 col-md-5 col-lg-4">
+          <a class="card-link" [routerLink]="['/characters/', character.id]">
+            <app-single-character [character]="character"></app-single-character>
+          </a>
+        </div>
+        } @empty {
+        <div class="col-12 text-center mt-5">
+          <p>No characters found.</p>
+        </div>
+        } } @else {
+        <div class="d-flex justify-content-center mt-5">
+          <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-modal [editData]="selectedCharacter" (characterCreated)="handleRefresh()"></app-modal>
+
+<app-footer></app-footer>
