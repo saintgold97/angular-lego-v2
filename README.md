@@ -1,59 +1,129 @@
-# AngularLegoV2
+# 🧱 AngularLegoV2
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+**AngularLegoV2** is a modern, high-performance management dashboard for Lego characters and projects.  
+Built with **Angular 19** and **Supabase**, the application leverages reactive patterns, real-time data synchronization, and a scalable architecture.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Key Features
 
-```bash
-ng serve
+- **Character Management**  
+  Full CRUD operations with advanced filtering by name, gender, city, and project.
+
+- **Reactive Favorites System**  
+  Toggle favorites with instant UI feedback using RxJS `BehaviorSubject`s and database persistence.
+
+- **Project & Activity Tracking**  
+  Organize characters into projects and monitor recent system activities with real-time updates.
+
+- **Global Dashboard & Analytics**  
+  Data visualization including:
+  - Gender distribution
+  - City demographics
+  - Project membership statistics
+
+- **Authentication & RBAC**  
+  Secure authentication via Supabase Auth with role-based access control (`USER`, `SUPERVISOR`, `ADMIN`).
+
+- **Performance Optimized**  
+  - Lazy loading for all routes  
+  - Shared streams with `shareReplay` to reduce database calls
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** [Angular 19+](https://angular.dev/) (Standalone Architecture)
+- **Backend:** [Supabase](https://supabase.com/) (PostgreSQL, Auth, Realtime)
+- **State Management:** RxJS (Observables, BehaviorSubjects, pipeable operators)
+- **UI & Styling:** Bootstrap 5 (Responsive Design)
+- **Testing:** Vitest
+
+---
+
+## 📁 Project Structure
+
+```text
+src/app/
+├── components/          # Feature-based standalone components
+├── services/            # Business logic & API abstraction
+├── models/              # TypeScript interfaces and types
+├── guards/              # Route guards (AuthGuard, LoginGuard)
+├── supabase/            # Supabase client & auth handling
+└── utils/               # SQL schemas and migration scripts
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## ⚙️ Setup & Installation
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 1️⃣ Prerequisites
 
-```bash
-ng generate component component-name
-```
+- **Node.js** v18+
+- **Angular CLI**
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### 2️⃣ Clone the Repository
 
 ```bash
-ng build
+git clone https://github.com/saintgold97/angular-lego-v2.git
+cd angular-lego-v2
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+### 3️⃣ Supabase Environment Configuration
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```ts
+export const environment = {
+  production: false,
+  supabaseUrl: 'https://your-project-id.supabase.co',
+  supabaseKey: 'your-anon-public-key'
+};
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+### 4️⃣ Database Initialization
 
-```bash
-ng e2e
+Run the SQL scripts inside:
+
+```
+src/app/utils/
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+This will create:
 
-## Additional Resources
+- `profiles` table (custom roles)
+- `projects` and `characters` tables
+- `favorites` junction table
+- `activities` table
+- `city` table
+- `bucket-policy`
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## 🏃 Available Scripts
+
+| Command | Description |
+|------|------|
+| `ng serve` | Starts dev server at http://localhost:4200/ |
+| `ng build` | Builds production assets |
+| `ng test` | Runs tests with Vitest |
+
+---
+
+## 📄 License
+
+MIT
+
+## 👤 Author
+Roberto Santoro
+
+Role: Lead Frontend Developer
+
+GitHub: saintgold97
+
+LinkedIn: Roberto Santoro
