@@ -1,0 +1,29 @@
+.project-detail-page {
+    padding-top: 24px;
+
+    .container-buttons {
+        display: flex;
+        justify-content: end;
+        gap: 6px;
+
+        .buttons-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .button-edit,
+        .button-delete {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 18px;
+        }
+    }   
+}
+
+.section-members {
+    margin: 24px 0;
+    
+    .card-link {
+        text-decoration: none;
+    }
+}

@@ -43,6 +43,7 @@
             class="btn-lego-add"
             data-bs-toggle="modal"
             data-bs-target="#legoModal"
+            data-bs-focus="false"
           >
             <span class="btn-content"> <i class="bi bi-plus-lg"></i>Add Character </span>
           </button>
@@ -81,6 +82,6 @@
   </div>
 </section>
 
-<app-modal [editData]="selectedCharacter" (characterCreated)="handleRefresh()"></app-modal>
+<app-modal (characterCreated)="handleRefresh()"></app-modal>
 
 <app-footer></app-footer>

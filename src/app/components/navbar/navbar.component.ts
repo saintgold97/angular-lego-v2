@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { Observable, from, map, switchMap, of } from 'rxjs';
@@ -9,13 +9,13 @@ import { UserProfile } from '../../models/profiles.model';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink],
 })
 export class NavbarComponent {
   isMenuOpen = false;
   isFixed: boolean = false;
   userData: Observable<Pick<UserProfile, 'avatar_url'>>;
+  imgLegoLogo = 'img/Lego_logo.png';
 
   constructor(private user: SupabaseService, private router: Router) {
     this.userData = this.user.user$.pipe(

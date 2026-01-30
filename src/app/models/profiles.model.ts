@@ -12,7 +12,8 @@ export interface UserProfile {
 export enum dashboardSectionEnum {
     PERSONAL_INFO = 'personalInfo',
     ADMIN_PANEL = 'adminPanel',
-    ANALYTICS = 'analytics'
+    ANALYTICS = 'analytics',
+    FAVORITES = 'favorites'
 };
 
 export type DashboardSection = typeof dashboardSectionEnum[keyof typeof dashboardSectionEnum];

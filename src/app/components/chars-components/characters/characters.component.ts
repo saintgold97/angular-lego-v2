@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LegoCharacter } from '../../../models/characters.model';
 import { FooterComponent } from '../../footer/footer.component';
 import { ModalComponent } from '../../modal-component/modal.component';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { SingleCharacterComponent } from '../single-character/single-character.component';
 import { SupabaseService } from '../../../supabase/supabase.service';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } from 'rxjs';
@@ -22,11 +22,10 @@ import { userRoleEnum } from '../../../models/profiles.model';
     ModalComponent,
     CommonModule,
     FormsModule,
-    RouterModule,
+    RouterLink,
     SingleCharacterComponent,
     HeroSectionComponent,
   ],
-  standalone: true
 })
 export class CharactersComponent implements OnInit {
   selectedGender: string = '';
@@ -35,7 +34,6 @@ export class CharactersComponent implements OnInit {
   readonly roles = userRoleEnum;
   private refreshCharacters$ = new BehaviorSubject<void>(undefined);
   characters$: Observable<LegoCharacter[]>;
-  selectedCharacter: LegoCharacter | null = null;
 
   constructor(private supabase: SupabaseService) {
     this.userRole$ = this.supabase.getProfileRole();

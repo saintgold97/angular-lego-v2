@@ -6,7 +6,6 @@ import 'chartjs-adapter-date-fns';
 
 @Component({
   selector: 'app-graph',
-  standalone: true,
   imports: [CommonModule, BaseChartDirective],
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.scss']

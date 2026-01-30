@@ -1,8 +1,10 @@
-<app-navbar></app-navbar>
 <section class="section-favorites">
-  <app-hero-section title="Your Favorite Characters"></app-hero-section>
+  <div class="favorites-header text-center mb-5">
+    <h2>Your Favorite Characters</h2>
+    <p>Browse through your collection of favorite LEGO characters!</p>
+  </div>
   @if(favorites) {
-  <section class="favorites-container">
+  <div class="favorites-container">
     <div class="container">
       <div class="row justify-content-center">
         @for (favorite of (favorites | async); track favorite.id) {
@@ -19,14 +21,14 @@
         } @empty {
         <div class="card container favorite-empty col-10 col-md-6 mt-5">
           <img
-            src="https://cdn.dribbble.com/users/12570/screenshots/13987694/media/1635918fab6854e489723a301619b7b2.jpg"
+            [src]="imgEmptyFavorites"
             alt="Empty"
           />
         </div>
         }
       </div>
     </div>
-  </section>
+  </div>
   } @else {
   <div class="d-flex justify-content-center mt-5">
     <div class="spinner-border text-warning" role="status">
@@ -35,4 +37,3 @@
   </div>
   }
 </section>
-<app-footer></app-footer>

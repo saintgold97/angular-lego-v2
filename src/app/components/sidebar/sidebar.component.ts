@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { DashboardSection, dashboardSectionEnum, userRoleEnum } from '../../models/profiles.model';
 import { Observable } from 'rxjs';
@@ -10,8 +10,7 @@ import { ThemeSwitcherComponent } from "../theme-switcher/theme-switcher.compone
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  standalone: true,
-  imports: [CommonModule, RouterModule, ThemeSwitcherComponent],
+  imports: [CommonModule, RouterLink, ThemeSwitcherComponent],
 })
 export class SidebarComponent {
   @Input() activeSection: DashboardSection = dashboardSectionEnum.PERSONAL_INFO;

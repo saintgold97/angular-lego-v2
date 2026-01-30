@@ -15,7 +15,6 @@ import { userRoleEnum } from "../../../models/profiles.model";
   templateUrl: './detail-character.component.html',
   styleUrls: ['./detail-character.component.scss'],
   imports: [NavbarComponent, FooterComponent, CommonModule, ModalComponent, RouterLink],
-  standalone: true
 })
 export class DetailCharacterComponent implements OnInit {
   character: Observable<LegoCharacter | null> = of(null);
@@ -69,7 +68,7 @@ export class DetailCharacterComponent implements OnInit {
       this.isFavorite.next(newState);
 
 
-      if (this.isFavorite) {
+      if (newState) {
         alert(`${this.currentCharacter.name} has been added to favorites! ⭐`);
       } else {
         alert(`${this.currentCharacter.name} has been removed from favorites!`);

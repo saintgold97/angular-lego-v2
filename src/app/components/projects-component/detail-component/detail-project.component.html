@@ -1,0 +1,132 @@
+<app-navbar></app-navbar>
+
+@if (projectData$ | async; as project) {
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="main-breadcrumb container">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
+    <li class="breadcrumb-item"><a routerLink="/projects">Projects</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      {{ project.name }}
+    </li>
+  </ol>
+</nav>
+<!-- /Breadcrumb -->
+
+<section class="project-detail-page">
+  <div class="container">
+    <div class="main-body">
+      <h2 class="project-detail-title mb-4">Project Details</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Name</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ project.name }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Description</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">{{ project.description }}</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Start Date</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{ project.start_date }}
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">End Date</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{ project.end_date ? project.end_date : 'Ongoing' }}
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Total Members</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  {{ project.totalMembers }}
+                </div>
+              </div>
+              <hr />
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="container-buttons">
+                    <div class="buttons-group">
+                      @if ((userRole$ | async) !== roles.USER) {
+                      <button
+                        type="button"
+                        class="btn btn-primary button-edit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#legoModal"
+                        data-bs-focus="false"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (membersData$ | async; as members) {
+<section class="section-members">
+  <div class="container">
+    <h2 class="members-title mb-4">Project Members ({{ members.length }})</h2>
+    <div class="row g-4">
+      @for (member of members; track member.id) {
+      <div class="col-12 col-md-6 col-lg-4">
+        <a class="card-link" [routerLink]="['/characters', member.id]">
+          <app-single-character [character]="member"></app-single-character>
+        </a>
+      </div>
+      } @empty {
+      <div class="col-12 text-center py-5">
+        <i class="bi bi-people text-muted" style="font-size: 3rem"></i>
+        <p class="text-muted mt-2">No members assigned to this project yet.</p>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+
+<app-modal
+  [editProject]="selectedProject"
+  (projectUpdated)="onProjectUpdated()"
+  [showProjectForm]="true"
+  [currentMembersIds]="getMemberIds(members)"
+/>
+} @else {
+<div class="text-center p-5">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
+} } @else {
+<div class="d-flex justify-content-center mt-5">
+  <div class="spinner-border text-warning" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+}
+
+<app-footer></app-footer>

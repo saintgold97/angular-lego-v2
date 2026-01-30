@@ -1,30 +1,51 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './components/components-home/home/home.component';
-import { CharactersComponent } from './components/chars-components/characters/characters.component';
-import { DetailCharacterComponent } from './components/chars-components/detail-character/detail-character.component';
-import { FavoriteComponents } from '../app/components/favorite-components/favorite.component';
-import { PageNotFoundComponent } from '../app/components/page-not-found/page-not-found.component';
-import { AuthComponent } from './supabase/auth/auth';
+import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginGuard } from './guards/login.guard';
-import { ProjectComponent } from './components/projects-component/project.component';
-import { DashboardComponent } from './components/dashboard-component/dashboard.component';
 
 export const routes: Routes = [
-  {path: "", component: AuthComponent, canActivate: [LoginGuard]},
-  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  {path:'characters',component: CharactersComponent, canActivate: [AuthGuard]},
-  {path:'characters/:id',component: DetailCharacterComponent, canActivate: [AuthGuard]},
-  { path: 'favorites', component: FavoriteComponents, canActivate: [AuthGuard] },
-  { path: 'projects', component: ProjectComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  {path: 'notfound', component: PageNotFoundComponent},
-  {path:'**', redirectTo:'notfound'},
+  {
+    path: "",
+    loadComponent: () => import('./supabase/auth/auth').then(m => m.AuthComponent),
+    canActivate: [LoginGuard]
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./components/components-home/home/home.component').then(m => m.HomeComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'characters',
+    loadComponent: () => import('./components/chars-components/characters/characters.component').then(m => m.CharactersComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'characters/:id',
+    loadComponent: () => import('./components/chars-components/detail-character/detail-character.component').then(m => m.DetailCharacterComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'projects',
+    loadComponent: () => import('./components/projects-component/project.component').then(m => m.ProjectComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'projects/:id',
+    loadComponent: () => import('./components/projects-component/detail-component/detail-project.component').then(m => m.DetailProjectComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./components/dashboard-component/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'activities',
+    loadComponent: () => import('./components/activities-component/activities.component').then(m => m.ActivitiesComponent),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'notfound',
+    loadComponent: () => import('./components/page-not-found/page-not-found.component').then(m => m.PageNotFoundComponent)
+  },
+  { path: '**', redirectTo: 'notfound' },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }

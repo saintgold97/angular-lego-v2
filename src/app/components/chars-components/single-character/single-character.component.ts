@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LegoCharacter } from '../../../models/characters.model';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-single-character',
   templateUrl: './single-character.component.html',
   styleUrls: ['./single-character.component.scss'],
-  standalone: true,
-  imports: [RouterModule],
+  imports: [RouterLink],
 })
 export class SingleCharacterComponent {
   @Input() character: LegoCharacter | undefined;

@@ -6,15 +6,14 @@ import {
   ReactiveFormsModule
 } from '@angular/forms'
 import { SupabaseService } from '../supabase.service'
-import { Router, RouterModule } from '@angular/router'
+import { Router } from '@angular/router'
 import { passwordMatchValidator } from '../../utils/authValidators'
 
 @Component({
   selector: 'app-auth',
-  standalone: true,
   templateUrl: './auth.html',
   styleUrls: ['./auth.scss'],
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule],
 })
 export class AuthComponent implements OnInit {
   authForm!: FormGroup

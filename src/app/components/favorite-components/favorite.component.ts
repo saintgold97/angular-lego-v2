@@ -1,25 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { LegoCharacter } from '../../models/characters.model';
 import { FavoritesService } from '../../services/favorites.service';
-import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { SingleCharacterComponent } from "../chars-components/single-character/single-character.component";
-import { RouterModule } from '@angular/router';
-import { HeroSectionComponent } from '../hero-section/hero-section.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-favorite-components',
   templateUrl: './favorite.component.html',
   styleUrls: ['./favorite.component.scss'],
-  imports: [NavbarComponent, FooterComponent, CommonModule, SingleCharacterComponent, RouterModule, HeroSectionComponent],
-  standalone: true
+  imports: [CommonModule, SingleCharacterComponent],
 })
 export class FavoriteComponents implements OnInit {
   favorites: Observable<LegoCharacter[]> | undefined;
   favoritesMap = new Set<string>();
   private refreshFavorites = new BehaviorSubject<void>(undefined);
+  imgEmptyFavorites = 'img/empty-favorites.webp';
 
   constructor(private favoritesService: FavoritesService) { }
 

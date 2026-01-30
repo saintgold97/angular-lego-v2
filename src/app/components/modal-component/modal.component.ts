@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { City, LegoCharacter, Project } from '../../models/characters.model';
 import { ReactiveFormsModule } from '@angular/forms'
@@ -8,33 +8,66 @@ import { SupabaseService } from '../../supabase/supabase.service';
     selector: 'app-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
-    standalone: true,
     imports: [ReactiveFormsModule],
 })
 export class ModalComponent implements OnInit, OnChanges {
-    legoForm: FormGroup = new FormGroup({});
+    // Character Form
+    legoCharacterForm: FormGroup = new FormGroup({});
     successMessage: string | null = null;
     errorMessage: string | null = null;
     @Output() characterCreated = new EventEmitter<void>();
     @Output() characterUpdated = new EventEmitter<void>();
     @Input() editData: LegoCharacter | null = null;
+
     @ViewChild('closeModal') closeModal!: ElementRef;
+
     cities: City[] = [];
     projects: Project[] = [];
     selectedFile: File | null = null;
     previewUrl: string | null = null;
     isUploading = false;
 
-    constructor(private fb: FormBuilder, private supabase: SupabaseService) { }
+    // Project Form
+    legoProjectForm: FormGroup = new FormGroup({});
+    @Input() editProject: Project | null = null;
+    @Output() projectCreated = new EventEmitter<void>();
+    @Output() projectUpdated = new EventEmitter<void>();
+    @Input() showProjectForm: boolean = false;
+
+    allCharacters: LegoCharacter[] = [];
+    @Input() currentMembersIds: string[] = [];
+
+    constructor(private fb: FormBuilder, private supabase: SupabaseService, private cdr: ChangeDetectorRef) {
+        this.initForm();
+    }
 
     ngOnInit(): void {
-        this.initForm();
         this.loadCities();
         this.loadProjects();
+        this.loadAllCharacters();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['editData'] && this.editData) {
+            this.legoCharacterForm.patchValue(this.editData);
+            this.previewUrl = this.editData.picture;
+        }
+
+        if (this.showProjectForm && (changes['editProject'] || changes['currentMembersIds'])) {
+            if (this.editProject && !this.legoProjectForm.dirty) {
+                this.legoProjectForm.patchValue({
+                    name: this.editProject.name,
+                    description: this.editProject.description,
+                    start_date: this.editProject.start_date,
+                    end_date: this.editProject.end_date,
+                    member_ids: [...(this.currentMembersIds || [])]
+                }, { emitEvent: false });
+            }
+        }
     }
 
     initForm() {
-        this.legoForm = this.fb.group({
+        this.legoCharacterForm = this.fb.group({
             name: ['', Validators.required],
             lastname: ['', Validators.required],
             gender: ['', Validators.required],
@@ -44,6 +77,15 @@ export class ModalComponent implements OnInit, OnChanges {
             phone: ['', Validators.required],
             picture: ['']
         });
+
+        this.legoProjectForm = this.fb.group({
+            name: ['', Validators.required],
+            description: ['', Validators.required],
+            start_date: ['', Validators.required],
+            end_date: [null],
+            member_ids: [[]]
+        });
+
     }
 
     loadCities() {
@@ -84,26 +126,12 @@ export class ModalComponent implements OnInit, OnChanges {
         reader.readAsDataURL(file);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['editData'] && this.editData) {
-            setTimeout(() => {
-                this.legoForm.patchValue(this.editData!);
-                this.previewUrl = this.editData!.picture;
-            }, 0);
-        } else if (changes['editData'] && !this.editData) {
-            this.legoForm.reset();
-            this.previewUrl = null;
-        }
-    }
-
-    async onSubmit(): Promise<void> {
-        if (this.legoForm.invalid) return;
-
+    async onCharacterSubmit(): Promise<void> {
+        if (this.legoCharacterForm.invalid) return;
         this.isUploading = true;
 
         try {
-            let pictureUrl = this.legoForm.get('picture')?.value;
-
+            let pictureUrl = this.legoCharacterForm.get('picture')?.value;
             if (this.selectedFile) {
                 const uploadedUrl = await this.supabase.uploadCharacterAvatar(this.selectedFile);
                 if (uploadedUrl) {
@@ -113,7 +141,7 @@ export class ModalComponent implements OnInit, OnChanges {
                 }
             }
 
-            const characterData: LegoCharacter = { ...this.legoForm.value, picture: pictureUrl };
+            const characterData: LegoCharacter = { ...this.legoCharacterForm.value, picture: pictureUrl };
 
             if (this.editData?.id) {
                 this.supabase.editCharacter(this.editData.id, characterData).subscribe({
@@ -139,10 +167,92 @@ export class ModalComponent implements OnInit, OnChanges {
         }
     }
 
+    async onProjectSubmit(): Promise<void> {
+        if (this.legoProjectForm.invalid) return;
+        this.isUploading = true;
+
+        try {
+            const { member_ids, ...projectData } = this.legoProjectForm.value;
+
+            // Gestione date vuote
+            if (!projectData.end_date) projectData.end_date = null;
+
+            if (this.editProject?.id) {
+                this.supabase.editProject(this.editProject.id, projectData).subscribe({
+                    next: async () => {
+                        await this.updateProjectMembers(this.editProject!.id!, member_ids);
+                    },
+                    error: (err) => this.handleError(err)
+                });
+            } else {
+                this.supabase.createProject(projectData).subscribe({
+                    next: async (res: any) => {
+                        const newId = res.data?.[0]?.id;
+                        if (newId) await this.updateProjectMembers(newId, member_ids);
+                    },
+                    error: (err) => this.handleError(err)
+                });
+            }
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    private async updateProjectMembers(projectId: string, memberIds: string[]) {
+        try {
+            await this.supabase.assignMembersToProject(projectId, memberIds);
+            this.projectUpdated.emit();
+            this.closeModalAction();
+        } catch (error) {
+            this.handleError(error);
+        } finally {
+            this.isUploading = false;
+        }
+    }
+
+    private handleError(err: any) {
+        console.error(err);
+        this.errorMessage = "An error occurred. Please try again.";
+        this.isUploading = false;
+    }
+
+    loadAllCharacters() {
+        this.supabase.getCharacters().subscribe(res => {
+            this.allCharacters = res;
+            this.cdr.detectChanges();
+        });
+    }
+
+    toggleMember(id: string, event: any) {
+        const isChecked = event.target.checked;
+        const control = this.legoProjectForm.get('member_ids');
+        const currentIds = [...(control?.value || [])];
+
+        if (isChecked) {
+            if (!currentIds.includes(id)) currentIds.push(id);
+        } else {
+            const index = currentIds.indexOf(id);
+            if (index > -1) currentIds.splice(index, 1);
+        }
+
+        control?.setValue(currentIds);
+        control?.markAsDirty(); // Segnala che l'utente sta modificando
+        this.cdr.detectChanges();
+    }
+
     closeModalAction() {
+        (document.activeElement as HTMLElement)?.blur(); // Force Remove focus from any active element
+        if (this.closeModal) {
+            this.closeModal.nativeElement.click();
+        }
+
         this.selectedFile = null;
         this.previewUrl = null;
-        this.closeModal.nativeElement.click();
-        this.legoForm.reset();
+        if (this.legoCharacterForm) this.legoCharacterForm.reset();
+        if (this.legoProjectForm) this.legoProjectForm.reset({ member_ids: [] });
+        this.errorMessage = null;
+        this.successMessage = null;
+        this.isUploading = false;
+        this.cdr.detectChanges();
     }
 }

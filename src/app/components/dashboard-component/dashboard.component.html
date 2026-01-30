@@ -155,68 +155,9 @@
       }
 
       <!-- Users Management -->
-      @if (activeSection === dashboardSectionEnum.ADMIN_PANEL && (userRole$ | async) === roles.ADMIN) {
-      <div class="row justify-content-center">
-        <div class="col-lg-10">
-          <div class="card admin-card glass p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <h4 class="m-0"><i class="bi bi-people-fill me-2"></i>Users Management</h4>
-              <span class="badge bg-dark">Admin Panel</span>
-            </div>
-
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th class="text-end">Change role</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (profile of allProfiles$ | async; track profile.id) {
-                  <tr>
-                    <td>
-                      <img
-                        [src]="profile.avatar_url || defaultAvatar"
-                        class="rounded-circle me-2"
-                        width="35"
-                        height="35"
-                        alt=""
-                      />
-                    </td>
-                    <td>{{ profile.email }}</td>
-                    <td>
-                      <span class="small fw-bold">{{ profile.role }}</span>
-                    </td>
-                    <td class="text-end">
-                      <select
-                        class="form-select form-select-sm d-inline-block w-auto"
-                        (change)="changeUserRole(profile.id, $event)"
-                      >
-                        <option [selected]="profile.role === roles.USER" [value]="roles.USER">
-                          User
-                        </option>
-                        <option
-                          [selected]="profile.role === roles.SUPERVISOR"
-                          [value]="roles.SUPERVISOR"
-                        >
-                          Supervisor
-                        </option>
-                        <option [selected]="profile.role === roles.ADMIN" [value]="roles.ADMIN">
-                          Admin
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      @if (activeSection === dashboardSectionEnum.ADMIN_PANEL && (userRole$ | async) ===
+      roles.ADMIN) {
+      <app-admin-panel />
       }
 
       <!-- Analytics -->
@@ -346,8 +287,10 @@
                 <div>
                   <p class="mb-0 small fw-bold">Added "{{ act.name }} {{ act.lastname }}"</p>
                   <small class="text-muted"
-                    >Project: {{ act.projects?.name }} • Created at: {{ act.created_at | date : 'd MMM y' }}</small
+                    >Project: {{ act.projects?.name }} • Created at:
+                    {{ act.created_at | date : 'd MMM y' }}</small
                   >
+                  <p class="text-muted small"> {{ act.created_by }}</p>
                 </div>
               </div>
               }
@@ -357,6 +300,13 @@
             }
           </div>
         </div>
+      </div>
+      }
+
+      <!-- Favorites -->
+      @if(activeSection === dashboardSectionEnum.FAVORITES) {
+      <div class="favorites-container animate__animated animate__fadeIn">
+        <app-favorite-components />
       </div>
       }
     </div>

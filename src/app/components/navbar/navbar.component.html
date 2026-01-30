@@ -3,7 +3,7 @@
     <a class="navbar-brand" [routerLink]="['/home']"
       ><img
         style="width: 60px; height: 60px"
-        src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Lego_logo.png"
+        [src]="imgLegoLogo"
         alt="Lego Logo"
     /></a>
     <button
@@ -23,8 +23,8 @@
         <div class="nav-list-links">
           <a class="nav-link active" aria-current="page"[routerLink]="['/home']">Home</a>
           <a class="nav-link" [routerLink]="['/characters']">Characters</a>
-          <a class="nav-link" [routerLink]="['/favorites']">Favorites</a>
           <a class="nav-link" [routerLink]="['/projects']">Projects</a>
+          <a class="nav-link" [routerLink]="['/activities']">Activities</a>
         </div>
         <div class="nav-user">
           @if (userData | async; as data) {

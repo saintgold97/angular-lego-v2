@@ -1,42 +1,49 @@
 <app-navbar />
 <section class="project-section">
   <app-hero-section title="Explore Our Exciting LEGO Projects"></app-hero-section>
-  
+
   <div class="container">
-    <div class="projects-container">
-      
-      @if (projectData$ | async; as projects) {
-        
-        @for (project of projects; track project.id) {
-          @if (project.id) {
-            <div class="project-card glass animate__fadeIn">
-              <div class="project-info">
-                <h3 class="project-title">{{ project.name }}</h3>
-                <p class="project-description">{{ project.description || 'No description available' }}</p>
-                <div class="project-meta">
-                  <p class="project-dates">Start: {{ project.start_date }} - End: {{ project.end_date }}</p>
-                </div>
-                <p class="project-members mt-3">
-                  <strong>Total Members:</strong> {{ project.total }}
-                </p>
-              </div>
-            </div>
-          }
-        } @empty {
-          <div class="col-12 text-center mt-5">
-            <p class="text-muted">No projects found with characters assigned.</p>
-          </div>
-        }
-
-      } @else {
-        <div class="d-flex justify-content-center mt-5">
-          <div class="spinner-border text-warning" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
+    <div class="container-button">
+      @if ((userRole$ | async) !== roles.USER) {
+      <button type="button" class="btn-lego-add" data-bs-toggle="modal" data-bs-target="#legoModal" data-bs-focus="false">
+        <span class="btn-content"> <i class="bi bi-plus-lg"></i>Add Project </span>
+      </button>
       }
+    </div>
 
+    <div class="projects-grid row g-4">
+      @if (projectData$ | async; as projects ) { @for (project of projects; track project.id) { @if
+      (project.id) {
+      <div class="col-12 col-md-6 col-lg-4 animate__fadeIn">
+        <a [routerLink]="['/projects', project.id]" class="project-card text-decoration-none">
+          <div class="card-content glass">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div class="project-icon">
+                <i class="bi bi-box-seam"></i>
+              </div>
+              <span class="member-badge">
+                <i class="bi bi-people-fill me-1"></i> {{ project.totalMembers }}
+              </span>
+            </div>
+
+            <h3 class="project-title">{{ project.name }}</h3>
+            <p class="project-description text-muted">
+              {{ project.description || 'No description available' }}
+            </p>
+
+            <div class="card-footer-custom mt-auto pt-3 border-top">
+              <span class="view-details">
+                View Project <i class="bi bi-arrow-right ms-1"></i>
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+      } }}
     </div>
   </div>
 </section>
+
+<app-modal [showProjectForm]="true" (projectCreated)="handleRefresh()"></app-modal>
+
 <app-footer />

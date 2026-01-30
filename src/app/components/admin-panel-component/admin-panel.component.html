@@ -1,0 +1,134 @@
+<section class="admin-section">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card admin-card glass p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="m-0"><i class="bi bi-people-fill me-2"></i>Users Management</h4>
+          <span class="badge bg-dark">Admin Panel</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th class="text-end">Change role</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (profile of allProfiles$ | async; track profile.id) {
+              <tr>
+                <td>
+                  <img
+                    [src]="profile.avatar_url || defaultAvatar"
+                    class="rounded-circle me-2"
+                    width="35"
+                    height="35"
+                    alt=""
+                  />
+                </td>
+                <td>{{ profile.email }}</td>
+                <td>
+                  <span class="small fw-bold">{{ profile.role }}</span>
+                </td>
+                <td class="text-end">
+                  <select
+                    class="form-select form-select-sm d-inline-block w-auto"
+                    (change)="changeUserRole(profile.id, $event)"
+                  >
+                    <option [selected]="profile.role === roles.USER" [value]="roles.USER">
+                      {{ roles.USER }}
+                    </option>
+                    <option
+                      [selected]="profile.role === roles.SUPERVISOR"
+                      [value]="roles.SUPERVISOR"
+                    >
+                      {{ roles.SUPERVISOR }}
+                    </option>
+                    <option [selected]="profile.role === roles.ADMIN" [value]="roles.ADMIN">
+                      {{ roles.ADMIN }}
+                    </option>
+                  </select>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="admin-activities-section glass p-4 mt-4 animate__fadeIn">
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
+  >
+    <div>
+      <h3 class="mb-0">Monitoring Activities</h3>
+      <p class="text-muted small mb-0">Log of all activities</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-nowrap small fw-bold text-uppercase">Filter:</span>
+      <select class="form-select border-0 shadow-sm custom-select" (change)="onUserChange($event)">
+        <option value="">All Users</option>
+        @for (profile of allProfiles$ | async; track profile.id) {
+        <option [value]="profile.id">{{ profile.email }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="activity-container">
+    @for (act of activities$ | async; track act.id) {
+    <div class="activity-card glass mb-4 p-3 animate__fadeIn">
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <img
+              [src]="act.profile?.avatar_url || defaultAvatar"
+              class="rounded-circle me-2"
+              width="35"
+              height="35"
+              alt=""
+            />
+          </div>
+          <span class="user-email fw-bold small text-primary">{{ act.profile?.email }}</span>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <span class="badge-type-pill" [ngClass]="getTypeClass(act.activity_type)">
+            <i class="bi" [ngClass]="getTypeIcon(act.activity_type)"></i>
+            {{ act.activity_type | titlecase }}
+          </span>
+          <small class="text-muted"
+            ><i class="bi bi-clock me-1"></i>{{ act.activity_date | date : 'mediumDate' }}</small
+          >
+        </div>
+      </div>
+
+      <div class="row align-items-start">
+        <div class="col-md-4 border-end project-info-title">
+          <label class="text-uppercase ultra-small text-muted d-block">Project</label>
+          <a class="project-name mb-0" [routerLink]="['/projects', act.project?.id]">{{ act.project?.name }}</a>
+          <span class="priority-indicator" [ngClass]="getPriorityClass(act.priority)">
+            {{ act.priority | uppercase }}
+          </span>
+        </div>
+
+        <div class="col-md-8 ps-md-4">
+          <label class="text-uppercase ultra-small text-muted d-block">Notes</label>
+          <p class="activity-notes mb-0">{{ act.notes }}</p>
+        </div>
+      </div>
+    </div>
+    }@empty {
+    <div class="text-center py-5 glass">
+      <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+      <p class="text-muted mt-2">No activities found for this selection.</p>
+    </div>
+    }
+  </div>
+</section>

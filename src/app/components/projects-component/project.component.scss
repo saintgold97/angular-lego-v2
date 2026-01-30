@@ -1,37 +1,153 @@
 .project-section {
-    .projects-container {
-        padding: 32px 0;
+    .container-button {
+        display: flex;
+        justify-content: space-evenly;
+        gap: 8px;
+        width: 100%;
+        padding: 16px 0;
+        height: 100%;
+
+        .btn-lego-add {
+            background: #2c3e50;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
+
+            .btn-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1;
+                position: relative;
+            }
+
+            i {
+                font-size: 1.1rem;
+                color: #ffc107;
+                transition: transform 0.3s ease;
+            }
+
+            &:hover {
+                background: #34495e;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(44, 62, 80, 0.3);
+                border-color: rgba(255, 193, 7, 0.5);
+
+                i {
+                    transform: rotate(90deg);
+                }
+            }
+
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 10px rgba(44, 62, 80, 0.2);
+            }
+
+            &:focus-visible {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.4);
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -60%;
+                width: 20%;
+                height: 200%;
+                background: rgba(255, 255, 255, 0.1);
+                transform: rotate(30deg);
+                transition: all 0.5s;
+            }
+
+            &:hover::after {
+                left: 120%;
+            }
+        }
+    }
+
+    .projects-grid {
+        padding: 24px 0;
 
         .project-card {
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
-            border: 1px solid black;
-            padding: 16px;
-            margin-bottom: 8px;
-            background-color: white;
+            display: block;
+            height: 100%;
 
-            &.glass {
-                background: rgba(255, 255, 255, 0.35);
-                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-                backdrop-filter: blur(5px);
-                -webkit-backdrop-filter: blur(5px);
-                border-radius: 10px;
-                border: 1px solid rgba(255, 255, 255, 0.18);
-            }
+            .card-content {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                padding: 1.5rem;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.4);
+                backdrop-filter: blur(10px);
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 
-            @media screen and (min-width: 768px) {
-                flex-direction: row;
-            }
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-
-            .project-info {
-                .project-title {
-                    margin-bottom: 16px;
+                &:hover {
+                    transform: translateY(-8px);
+                    background: rgba(255, 255, 255, 0.6);
+                    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                    border-color: #ffc107;
                 }
+            }
+
+            .project-icon {
+                width: 45px;
+                height: 45px;
+                background: #2c3e50;
+                color: #ffc107;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+            }
+
+            .member-badge {
+                font-size: 0.8rem;
+                font-weight: 700;
+                background: rgba(0, 0, 0, 0.05);
+                padding: 4px 12px;
+                border-radius: 50px;
+                color: #555;
+            }
+
+            .project-title {
+                font-size: 1.25rem;
+                font-weight: 800;
+                color: #1a1a1a;
+                margin-bottom: 0.75rem;
+            }
+
+            .project-description {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .view-details {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #2c3e50;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: gap 0.3s;
             }
         }
     }

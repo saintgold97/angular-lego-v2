@@ -1,0 +1,61 @@
+<div class="edit-sidebar" [class.active]="isOpen">
+  <div class="sidebar-header d-flex justify-content-between align-items-center p-4">
+    <h4 class="mb-0 text-white">Edit Activity</h4>
+    <button class="btn-close btn-close-white" (click)="close()"></button>
+  </div>
+
+  <div class="sidebar-body p-4">
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-bold">PROJECT</label>
+        <select class="form-select custom-input" formControlName="project_id">
+          @for (p of projects$ | async; track p.id) {
+          <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-6">
+          <label class="form-label text-muted small fw-bold">TYPE</label>
+          <select class="form-select custom-input" formControlName="activity_type">
+            @for (t of activityTypes; track t) {
+            <option [value]="t">{{ t | titlecase }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-6">
+          <label class="form-label text-muted small fw-bold">PRIORITY</label>
+          <select class="form-select custom-input" formControlName="priority">
+            @for (pr of priorities; track pr) {
+            <option [value]="pr">{{ pr | titlecase }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label text-muted small fw-bold">DATE</label>
+        <input type="date" class="form-control custom-input" formControlName="activity_date" />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label text-muted small fw-bold">NOTES</label>
+        <textarea class="form-control custom-input" rows="5" formControlName="notes"></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-warning w-100 fw-bold py-3 shadow"
+        [disabled]="editForm.invalid || uploading"
+      >
+        @if (uploading) { <span class="spinner-border spinner-border-sm me-2"></span> } UPDATE
+        ACTIVITY
+      </button>
+    </form>
+  </div>
+</div>
+
+@if (isOpen) {
+<div class="sidebar-overlay" (click)="close()"></div>
+}

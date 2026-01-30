@@ -29,7 +29,8 @@ export interface Project {
   description: string;
   start_date: Date;
   end_date: Date;
-  total?: number;
+  members?: { count: number }[];
+  totalMembers?: number;
   males?: number;
   females?: number;
 }

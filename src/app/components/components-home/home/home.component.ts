@@ -9,7 +9,6 @@ import { NavbarComponent } from '../../navbar/navbar.component';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   imports: [NavbarComponent, FooterComponent, HeroSectionComponent, HomeSectionComponent],
-  standalone: true
 })
 export class HomeComponent {
 

@@ -4,6 +4,7 @@ import { environment } from '../environments/environments'
 import { City, GenderEnum, LegoCharacter, Project } from '../models/characters.model'
 import { BehaviorSubject, from, Observable, map, switchMap, of, shareReplay, catchError } from 'rxjs';
 import { UserProfile, userRoleEnum } from '../models/profiles.model';
+import { Activity } from '../models/activities.model';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
@@ -11,6 +12,8 @@ export class SupabaseService {
   private userSubject = new BehaviorSubject<User | null>(null)
   user$ = this.userSubject.asObservable()
   private roleCache$: Observable<userRoleEnum> | null = null;
+  private citiesCache$: Observable<City[]> | null = null;
+  private projectsCache$: Observable<Project[]> | null = null;
 
   constructor() {
     this.supabase = createClient(
@@ -35,6 +38,8 @@ export class SupabaseService {
 
   signOut() {
     this.roleCache$ = null;
+    this.citiesCache$ = null;
+    this.projectsCache$ = null;
     return this.supabase.auth.signOut()
   }
 
@@ -144,33 +149,29 @@ export class SupabaseService {
   }
 
   getProfileRole(): Observable<userRoleEnum> {
-    if (this.roleCache$) {
-      return this.roleCache$;
+    if (!this.roleCache$) {
+      this.roleCache$ = this.user$.pipe(
+        switchMap(user => {
+          if (!user) return of(userRoleEnum.USER);
+          return from(
+            this.supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', user.id)
+              .single()
+          ).pipe(
+            map(res => (res.data?.role as userRoleEnum) || userRoleEnum.USER),
+            catchError(() => of(userRoleEnum.USER))
+          );
+        }),
+        shareReplay(1)
+      );
     }
-
-    this.roleCache$ = from(this.supabase.auth.getSession()).pipe(
-      switchMap(({ data: { session } }) => {
-        const userId = session?.user?.id;
-        if (!userId) return of(userRoleEnum.USER);
-
-        return from(
-          this.supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', userId)
-            .single()
-        ).pipe(
-          map(res => (res.data?.role as userRoleEnum) || userRoleEnum.USER)
-        );
-      }),
-      shareReplay(1)
-    );
-
     return this.roleCache$;
   }
 
   // ================= CHARACTERS =================
-  getCharacters(filter?: { name?: string; gender?: string }): Observable<LegoCharacter[]> {
+  getCharacters(filter?: { name?: string; gender?: string, project_id?: string }): Observable<LegoCharacter[]> {
     return this.user$.pipe(
       switchMap(user => {
         if (!user) return of(null);
@@ -209,6 +210,10 @@ export class SupabaseService {
         }
         if (filter?.gender) {
           query = query.eq('gender', filter.gender);
+        }
+
+        if (filter?.project_id) {
+          query = query.eq('project_id', filter.project_id);
         }
 
         return from(query).pipe(
@@ -302,30 +307,27 @@ export class SupabaseService {
 
   // ================= FAVORITES =================
 
-  getFavorites(): Observable<any> {
-    return from(this.supabase.auth.getSession()).pipe(
-      switchMap(({ data: { session } }) => {
-        const userId = session?.user?.id;
-
-        if (!userId) return of([]);
+  getFavorites(): Observable<any[]> {
+    return this.user$.pipe(
+      switchMap(user => {
+        if (!user?.id) return of([]);
 
         const query = this.supabase
           .from('favorites')
           .select('*')
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false });
 
-        return from(query).pipe(map(res => res.data || []));
+        return from(query).pipe(
+          map(res => res.data || [])
+        );
       })
     );
   }
 
-  async addFavorite(character: LegoCharacter): Promise<any> {
-    const { data: { session } } = await this.supabase.auth.getSession();
-    const userId = session?.user?.id;
-    if (!userId) {
-      throw new Error("You must be logged in to add favorites");
-    }
+  addFavorite(character: LegoCharacter): Observable<any> {
+    const userId = this.currentUserValue?.id;
+    if (!userId) throw new Error("You must be logged in to add favorites");
 
     const query = this.supabase.from('favorites').insert({
       character_id: character.id,
@@ -336,9 +338,8 @@ export class SupabaseService {
     return from(query);
   }
 
-  async removeFavorite(characterId: string) {
-    const { data: { session } } = await this.supabase.auth.getSession();
-    const userId = session?.user?.id;
+  removeFavorite(characterId: string): Observable<any> {
+    const userId = this.currentUserValue?.id;
 
     if (!userId) {
       throw new Error("You must be logged in to remove favorites");
@@ -353,9 +354,7 @@ export class SupabaseService {
   }
 
   async isFavorite(characterId: string): Promise<boolean> {
-    const { data: { session } } = await this.supabase.auth.getSession();
-    const userId = session?.user?.id;
-
+    const userId = this.currentUserValue?.id;
     if (!userId) return false;
 
     const { data, error } = await this.supabase
@@ -375,22 +374,93 @@ export class SupabaseService {
 
   // ================= CITIES =================
   getCities(): Observable<City[]> {
-    return from(this.supabase.from('cities').select('*').order('name')).pipe(
-      map(res => {
-        if (res.error) throw res.error;
-        return res.data as City[];
-      })
-    );
+    if (!this.citiesCache$) {
+      this.citiesCache$ = from(this.supabase.from('cities').select('*').order('name')).pipe(
+        map(res => {
+          if (res.error) throw res.error;
+          return res.data as City[];
+        }),
+        shareReplay(1)
+      );
+    }
+    return this.citiesCache$;
   }
 
   // ================= PROJECTS =================
   getProjects(): Observable<Project[]> {
-    return from(this.supabase.from('projects').select('*').order('name')).pipe(
+    if (!this.projectsCache$) {
+      this.projectsCache$ = from(this.supabase.from('projects').select(`*, members:characters(count)`).order('name')).pipe(
+        map(res => {
+          if (res.error) throw res.error;
+          return (res.data as Project[]).map(p => ({
+            ...p,
+            totalMembers: p.members?.[0]?.count || 0
+          }));
+        }), shareReplay(1));
+    }
+    return this.projectsCache$
+  }
+
+  createProject(project: Project): Observable<any> {
+    const payload = {
+      name: project.name,
+      description: project.description,
+      start_date: project.start_date,
+      end_date: project.end_date || null,
+    };
+
+    return from(this.supabase.from('projects').insert(payload).select());
+  }
+
+  editProject(id: string, project: Partial<Project>): Observable<any> {
+    return from(this.supabase.from('projects').update(project).eq('id', id).select());
+  }
+
+  getProjectById(id: string): Observable<Project | null> {
+    const query = this.supabase.from('projects').select('*, members:characters(count)').eq('id', id).single();
+
+    return from(query).pipe(
       map(res => {
-        if (res.error) throw res.error;
-        return res.data as Project[];
+        if (res.error) {
+          console.error('Errore fetching character:', res.error);
+          return null;
+        }
+
+        const p = res.data as any;
+        return {
+          ...p,
+          totalMembers: p.members?.[0]?.count || 0
+        } as Project;
       })
     );
+  }
+
+  async assignMembersToProject(projectId: string, memberIds: string[]): Promise<any> {
+    if (!projectId) {
+      console.error("Error: projectId is required to assign members.");
+      return;
+    }
+
+    try {
+      const { error: clearError } = await this.supabase
+        .from('characters')
+        .update({ project_id: null })
+        .eq('project_id', projectId);
+
+      if (clearError) throw clearError;
+
+      if (memberIds && memberIds.length > 0) {
+        const { error: updateError } = await this.supabase
+          .from('characters')
+          .update({ project_id: projectId })
+          .in('id', memberIds);
+
+        if (updateError) throw updateError;
+      }
+    } catch (err) {
+      console.error("Error assigning members to project:", err);
+      throw err;
+    }
   }
 
   // ================= DASHBOARD STATISTICS =================
@@ -452,13 +522,13 @@ export class SupabaseService {
                     description: p.description || '',
                     start_date: p.start_date,
                     end_date: p.end_date,
-                    males: 0, females: 0, total: 0
+                    males: 0, females: 0, totalMembers: 0
                   };
                 }
 
                 if (char.gender === 'male') projectDetailedMap[p.id].males!++;
                 else if (char.gender === 'female') projectDetailedMap[p.id].females!++;
-                projectDetailedMap[p.id].total!++;
+                projectDetailedMap[p.id].totalMembers!++;
               }
             });
             const projectsArray = Object.values(projectDetailedMap);
@@ -473,7 +543,7 @@ export class SupabaseService {
               projects: {
                 detailed: projectsArray,
                 labels: projectsArray.map(p => p.name),
-                data: projectsArray.map(p => p.total)
+                data: projectsArray.map(p => p.totalMembers)
               },
             };
           })
@@ -482,8 +552,8 @@ export class SupabaseService {
     );
   }
 
-  // ================= RECENT ACTIVITY =================
-  async getRecentActivity(): Promise<any> {
+  // ================= RECENT CHAR ACTIVITY =================
+  async getRecentCharactersActivity(): Promise<any> {
     const { data, error } = await this.supabase
       .from('characters')
       .select('name, lastname, created_at, projects(name)')
@@ -491,5 +561,51 @@ export class SupabaseService {
       .limit(5);
 
     return { data, error };
+  }
+
+  // ================= ACTIVITY =================
+  getActivities(userId?: string): Observable<any[]> {
+    let query = this.supabase
+      .from('activities')
+      .select(`
+        *,
+        project:projects(id, name),
+        profile:profiles!activities_created_by_fkey(email, display_name, avatar_url)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (userId) {
+      query = query.eq('created_by', userId);
+    }
+
+    return from(query).pipe(
+      map(res => {
+        if (res.error) throw res.error;
+        return res.data || [];
+      })
+    );
+  }
+
+  createActivity(activity: Activity): Observable<any> {
+    return from(this.supabase.from('activities').insert(activity));
+  }
+
+  updateActivity(id: string, activity: Partial<Activity>): Observable<any> {
+    return from(
+      this.supabase
+        .from('activities')
+        .update(activity)
+        .eq('id', id)
+        .select()
+    );
+  }
+
+  deleteActivity(id: string): Observable<any> {
+    return from(
+      this.supabase
+        .from('activities')
+        .delete()
+        .eq('id', id)
+    );
   }
 }

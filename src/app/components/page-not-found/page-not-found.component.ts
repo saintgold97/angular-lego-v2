@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.scss'],
-  standalone: true,
-  imports: [RouterModule],
+  imports: [RouterLink],
 })
 export class PageNotFoundComponent {
-
+  imgPath = 'img/error-not-found-404-lego.webp';
 }

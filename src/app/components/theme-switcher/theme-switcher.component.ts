@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-theme-switcher',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './theme-switcher.component.html',
   styleUrls: ['./theme-switcher.component.scss']

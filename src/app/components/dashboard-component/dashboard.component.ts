@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { DashboardSection, dashboardSectionEnum, UserProfile, userRoleEnum } from '../../models/profiles.model';
 import { BehaviorSubject, Observable, combineLatest, from } from 'rxjs';
@@ -9,13 +9,14 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { passwordMatchValidator } from '../../utils/authValidators';
 import { GraphComponent } from '../graph-component/graph.component';
+import { FavoriteComponents } from "../favorite-components/favorite.component";
+import { AdminPanelComponent } from "../admin-panel-component/admin-panel.component";
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
-  imports: [CommonModule, RouterModule, SidebarComponent, ReactiveFormsModule, GraphComponent],
+  imports: [CommonModule, SidebarComponent, ReactiveFormsModule, GraphComponent, FavoriteComponents, AdminPanelComponent],
 })
 
 export class DashboardComponent implements OnInit {
@@ -143,20 +144,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  async changeUserRole(userId: string, event: any) {
-    const newRole = event.target.value as userRoleEnum;
-    const { error } = await this.supabase['supabase']
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', userId);
-
-    if (error) {
-      alert("Error updating role: " + error.message);
-    } else {
-      alert("Role updated successfully.");
-    }
-  }
-
   private initForm() {
     this.editProfileForm = this.fb.group(
       {
@@ -261,7 +248,7 @@ export class DashboardComponent implements OnInit {
     );
 
     this.recentActivities$ = this.refreshProfile$.pipe(
-      switchMap(() => from(this.supabase.getRecentActivity())),
+      switchMap(() => from(this.supabase.getRecentCharactersActivity())),
       map(res => res.data),
       shareReplay(1)
     );

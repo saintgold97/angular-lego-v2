@@ -1,0 +1,40 @@
+.activities-section {
+    .activity-details {
+        .activity-title {
+            display: flex;
+            flex-direction: column;
+
+            .project-name {
+                text-decoration: none;
+                color: inherit;
+                font-weight: bold;
+                transition: all 0.2s ease-in-out;
+
+                &:hover {
+                    text-decoration: underline;
+                    color: #FFC107;
+                }
+            }
+        }
+    }
+
+    .activities-card-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+
+        .activity-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            width: 100%;
+        }
+    }
+}
