@@ -5,7 +5,7 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms'
-import { SupabaseService } from '../supabase.service'
+import { SupabaseService } from '../../supabase/supabase.service'
 import { Router } from '@angular/router'
 import { passwordMatchValidator } from '../../utils/authValidators'
 
