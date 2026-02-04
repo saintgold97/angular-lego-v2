@@ -33,7 +33,8 @@ export class EditActivityComponent implements OnChanges {
       notes: ['', [Validators.required, Validators.minLength(5)]],
       activity_type: ['', Validators.required],
       priority: ['', Validators.required],
-      activity_date: ['', Validators.required]
+      activity_date: ['', Validators.required],
+      working_hours: [0, [Validators.required, Validators.min(0)]],
     });
   }
 

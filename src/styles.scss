@@ -1,3 +1,51 @@
 /* You can add global styles to this file, and also import other style files */
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
+
+
+// Priority Activity Badge Styles
+.prio-critical {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.prio-high {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.prio-medium {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.prio-low {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+// Type Activity Badge Styles
+.type-issue {
+    background: #fff;
+    color: #0284c7;
+}
+
+.type-milestone {
+    background: #fff;
+    color: #b45309;
+}
+
+.type-meeting {
+    background: #fff;
+    color: #374151;
+}
+
+.type-task {
+    background: #fff;
+    color: #7c3aed;
+}
+
+.type-update {
+    background: #fff;
+    color: #059669;;
+}

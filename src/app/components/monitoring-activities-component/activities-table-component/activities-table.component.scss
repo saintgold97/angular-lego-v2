@@ -1,0 +1,25 @@
+.table {
+    thead th {
+        border-top: none;
+        letter-spacing: 0.05em;
+    }
+
+    tbody tr {
+        transition: background-color 0.2s ease;
+        cursor: default;
+
+        &:hover {
+            background-color: rgba(var(--bs-primary-rgb), 0.03);
+        }
+    }
+
+    .badge {
+        min-width: 70px;
+        text-transform: capitalize;
+    }
+
+    .container-buttons {
+        display: flex;
+        gap: 4px;
+    }
+}

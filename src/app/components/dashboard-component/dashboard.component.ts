@@ -11,12 +11,13 @@ import { passwordMatchValidator } from '../../utils/authValidators';
 import { GraphComponent } from '../graph-component/graph.component';
 import { FavoriteComponents } from "../favorite-components/favorite.component";
 import { AdminPanelComponent } from "../admin-panel-component/admin-panel.component";
+import { MonitoringActivitiesComponent } from "../monitoring-activities-component/monitoring-activities.component";
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  imports: [CommonModule, SidebarComponent, ReactiveFormsModule, GraphComponent, FavoriteComponents, AdminPanelComponent],
+  imports: [CommonModule, SidebarComponent, ReactiveFormsModule, GraphComponent, FavoriteComponents, AdminPanelComponent, MonitoringActivitiesComponent],
 })
 
 export class DashboardComponent implements OnInit {

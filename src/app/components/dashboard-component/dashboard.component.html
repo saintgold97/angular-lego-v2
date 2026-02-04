@@ -160,6 +160,12 @@
       <app-admin-panel />
       }
 
+      <!-- Monitoring Activities -->
+      @if (activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES && (userRole$ | async) !==
+      roles.USER) {
+      <app-monitoring-activities />
+      }
+
       <!-- Analytics -->
       @if (activeSection === dashboardSectionEnum.ANALYTICS && (userRole$ | async) !== roles.USER) {
       <div class="analytics-container animate__animated animate__fadeIn">
@@ -290,7 +296,7 @@
                     >Project: {{ act.projects?.name }} • Created at:
                     {{ act.created_at | date : 'd MMM y' }}</small
                   >
-                  <p class="text-muted small"> {{ act.created_by }}</p>
+                  <p class="text-muted small">{{ act.created_by }}</p>
                 </div>
               </div>
               }

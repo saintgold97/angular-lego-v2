@@ -1,3 +1,6 @@
+import { Project } from "./characters.model";
+import { UserProfile } from "./profiles.model";
+
 export enum ActivityType {
     UPDATE = 'update',
     MILESTONE = 'milestone',
@@ -22,4 +25,7 @@ export interface Activity {
     priority: ActivityPriority;
     activity_date: string;
     created_at?: string;
+    working_hours: number;
+    project?: Project;
+    profile?: UserProfile;
 }

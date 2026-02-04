@@ -1,0 +1,76 @@
+.admin-activities-section {
+  .activity-card {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: -30px;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 2px solid #0d6efd;
+      border-radius: 50%;
+    }
+  }
+
+  .ultra-small {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    font-weight: 800;
+  }
+
+  .project-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .activity-notes {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* Badge Priority Minimal */
+  .priority-indicator {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  /* Badge Type Pill */
+  .badge-type-pill {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .project-info-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    .project-name {
+      text-decoration: none;
+      color: inherit;
+      font-weight: bold;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        text-decoration: underline;
+        color: #FFC107;
+      }
+    }
+  }
+
+  .activity-actions {
+    display: flex;
+    justify-content: end;
+    gap: 8px;
+    padding-top: 16px;
+  }
+}
