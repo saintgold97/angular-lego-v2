@@ -1,0 +1,80 @@
+<section class="admin-activities-section p-4 animate__fadeIn">
+  <div class="activity-container">
+    @for (group of groupedActivities(); track group.projectId) {
+    <div class="project-group-header mb-3 mt-4 d-flex align-items-center">
+      <div class="project-badge-icon me-3">
+        <i class="bi bi-folder2-open fs-4 text-primary"></i>
+      </div>
+      <div>
+        <h3 class="h5 mb-0 fw-bold">{{ group.projectName }}</h3>
+        <span class="text-muted small">{{ group.items.length }} activities recorded</span>
+      </div>
+      <div class="ms-auto border-start ps-3">
+        <a
+          class="btn btn-sm btn-outline-primary py-0"
+          [routerLink]="['/projects', group.projectId]"
+        >
+          View Project <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="project-activities-list ps-4 border-start ms-3">
+      @for (act of group.items; track act.id) {
+      <div class="activity-card mb-3 p-3 shadow-sm border-0 animate__fadeIn bg-white rounded-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          @if(!hideProfileDetails){
+          <div class="d-flex align-items-center">
+            <img
+              [src]="act.profile?.avatar_url || defaultAvatar"
+              class="rounded-circle me-2 border"
+              width="28"
+              height="28"
+            />
+            <span class="user-email fw-bold small text-dark">{{ act.profile?.email }}</span>
+          </div>
+          }
+
+          <div class="d-flex gap-2 align-items-center">
+            <span class="badge-type-pill" [ngClass]="getTypeClass(act.activity_type)">
+              <i class="bi" [ngClass]="getTypeIcon(act.activity_type)"></i>
+              {{ act.activity_type | titlecase }}
+            </span>
+            <span class="priority-indicator" [ngClass]="getPriorityClass(act.priority)">
+              {{ act.priority }}
+            </span>
+          </div>
+        </div>
+
+        <div class="activity-content ps-2">
+          <p class="activity-notes mb-2 text-secondary small">{{ act.notes }}</p>
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+            <span class="ultra-small text-muted text-uppercase">
+              <i class="bi bi-calendar-event me-1"></i>{{ act.activity_date | date : 'mediumDate' }}
+            </span>
+            <span class="badge bg-light text-dark fw-bold border">
+              <i class="bi bi-stopwatch me-1"></i>Working Hours: {{ act.working_hours }}h
+            </span>
+          </div>
+          @if(!hideButtons) {
+          <div class="activity-actions">
+            <button class="btn btn-sm btn-primary" (click)="editHandler(act)">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="removeHandler($event, act)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    } @empty {
+    <div class="text-center py-5">
+      <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+      <p class="text-muted mt-2">No activities found for this selection.</p>
+    </div>
+    }
+  </div>
+</section>

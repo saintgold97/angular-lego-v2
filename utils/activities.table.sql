@@ -14,6 +14,7 @@ CREATE TABLE public.activities (
     ),
     
     activity_date date DEFAULT CURRENT_DATE,
+    working_hours numeric(5,2) DEFAULT 0 CHECK (working_hours >= 0)
     created_at timestamptz DEFAULT now()
 );
 

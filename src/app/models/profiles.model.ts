@@ -13,7 +13,8 @@ export enum dashboardSectionEnum {
     PERSONAL_INFO = 'personalInfo',
     ADMIN_PANEL = 'adminPanel',
     ANALYTICS = 'analytics',
-    FAVORITES = 'favorites'
+    FAVORITES = 'favorites',
+    MONITORING_ACTIVITIES = 'monitoringActivities',
 };
 
 export type DashboardSection = typeof dashboardSectionEnum[keyof typeof dashboardSectionEnum];

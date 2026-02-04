@@ -564,7 +564,7 @@ export class SupabaseService {
   }
 
   // ================= ACTIVITY =================
-  getActivities(userId?: string): Observable<any[]> {
+  getActivities(userId?: string, projectId?: string): Observable<any[]> {
     let query = this.supabase
       .from('activities')
       .select(`
@@ -576,6 +576,10 @@ export class SupabaseService {
 
     if (userId) {
       query = query.eq('created_by', userId);
+    }
+
+    if (projectId) {
+      query = query.eq('project_id', projectId);
     }
 
     return from(query).pipe(
