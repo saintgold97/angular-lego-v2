@@ -1,0 +1,13 @@
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a class="breadcrumb-link" routerLink="/home"><i class="bi bi-house-door me-1"></i> Home</a>
+    </li>
+
+    <li class="breadcrumb-item">
+      <a class="breadcrumb-link" [routerLink]="parentLink">{{ parentLabel }}</a>
+    </li>
+
+    <li class="breadcrumb-item active" aria-current="page">{{ detailName }}</li>
+  </ol>
+</nav>

@@ -6,7 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./hero-section.component.scss'],
 })
 export class HeroSectionComponent {
-  @Input() title: string = '';
-  @Input() subtitle: string = '';
-
+  @Input() title: string = 'Hero Section Title';
+  @Input() description: string = 'Hero Section Description';
 }

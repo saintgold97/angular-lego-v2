@@ -3,7 +3,6 @@ import { AbstractControl, FormControl, ValidationErrors } from "@angular/forms";
 const matchPwdValidator = (control: FormControl): 
 { [s: string]: boolean } | null => {
 
-  // ? prendo il valore del FormControl 'pwd' che sta nel parent del control
   const pwdValue = control.parent?.get('pwd')?.value;
 
   if (control.value !== pwdValue) {

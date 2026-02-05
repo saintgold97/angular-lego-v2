@@ -11,6 +11,7 @@ import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } f
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { HeroSectionComponent } from '../../hero-section/hero-section.component';
 import { userRoleEnum } from '../../../models/profiles.model';
+import { GatewaySectionComponent } from "../../gateway-section/gateway-section.component";
 
 @Component({
   selector: 'app-characters',
@@ -25,6 +26,7 @@ import { userRoleEnum } from '../../../models/profiles.model';
     RouterLink,
     SingleCharacterComponent,
     HeroSectionComponent,
+    GatewaySectionComponent
   ],
 })
 export class CharactersComponent implements OnInit {

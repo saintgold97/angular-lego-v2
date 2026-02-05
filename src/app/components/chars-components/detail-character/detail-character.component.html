@@ -5,15 +5,11 @@
   <div class="container">
     <div class="main-body">
       <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb" class="main-breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
-          <li class="breadcrumb-item"><a routerLink="/characters">Characters</a></li>
-          <li class="breadcrumb-item active" aria-current="page">
-            {{ char.name }} {{ char.lastname }}
-          </li>
-        </ol>
-      </nav>
+      <app-breadcrumb
+        [detailName]="char.name + ' ' + char.lastname"
+        parentLabel="Characters"
+        parentLink="/characters"
+      />
       <!-- /Breadcrumb -->
 
       <div class="row gutters-sm">
@@ -100,8 +96,7 @@
                       }
                     </div>
                     <button class="btn button-favorite" (click)="toggleFavorite()">
-                      <i [ngClass]="(isFavorite | async) ? 'bi-heart-fill' : 'bi-heart'"
-                      ></i>
+                      <i [ngClass]="(isFavorite | async) ? 'bi-heart-fill' : 'bi-heart'"></i>
                     </button>
                   </div>
                 </div>

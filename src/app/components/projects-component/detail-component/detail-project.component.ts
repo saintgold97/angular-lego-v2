@@ -9,12 +9,13 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import { userRoleEnum } from '../../../models/profiles.model';
 import { SupabaseService } from '../../../supabase/supabase.service';
 import { SingleCharacterComponent } from "../../chars-components/single-character/single-character.component";
+import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.component";
 
 @Component({
   selector: 'app-detail-project',
   templateUrl: './detail-project.component.html',
   styleUrls: ['./detail-project.component.scss'],
-  imports: [RouterLink, NavbarComponent, FooterComponent, CommonModule, ModalComponent, SingleCharacterComponent],
+  imports: [RouterLink, NavbarComponent, FooterComponent, CommonModule, ModalComponent, SingleCharacterComponent, BreadcrumbComponent],
 })
 
 export class DetailProjectComponent implements OnInit {

@@ -1,21 +1,13 @@
 <app-navbar></app-navbar>
 
 @if (projectData$ | async; as project) {
-<!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="main-breadcrumb container">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
-    <li class="breadcrumb-item"><a routerLink="/projects">Projects</a></li>
-    <li class="breadcrumb-item active" aria-current="page">
-      {{ project.name }}
-    </li>
-  </ol>
-</nav>
-<!-- /Breadcrumb -->
 
 <section class="project-detail-page">
   <div class="container">
     <div class="main-body">
+      <!-- Breadcrumb -->
+      <app-breadcrumb [detailName]="project.name" parentLabel="Projects" parentLink="/projects" />
+      <!-- /Breadcrumb -->
       <h2 class="project-detail-title mb-4">Project Details</h2>
       <div class="row justify-content-center">
         <div class="col-md-10">

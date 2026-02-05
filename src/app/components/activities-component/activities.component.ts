@@ -9,12 +9,13 @@ import { EditActivityComponent } from "./edit-activity-component/edit-activity.c
 import { AddActivityComponent } from "./add-activity-component/add-activity.component";
 import { ActivitiesTableComponent } from "../monitoring-activities-component/activities-table-component/activities-table.component";
 import { ActivitiesListComponent } from "../monitoring-activities-component/activities-list-component/activities-list.component";
+import { GatewaySectionComponent } from "../gateway-section/gateway-section.component";
 
 @Component({
     selector: 'app-activities',
     templateUrl: './activities.component.html',
     styleUrls: ['./activities.component.scss'],
-    imports: [CommonModule, NavbarComponent, FooterComponent, HeroSectionComponent, AddActivityComponent, EditActivityComponent, ActivitiesTableComponent, ActivitiesListComponent],
+    imports: [CommonModule, NavbarComponent, FooterComponent, HeroSectionComponent, AddActivityComponent, EditActivityComponent, ActivitiesTableComponent, ActivitiesListComponent, GatewaySectionComponent],
 })
 export class ActivitiesComponent {
     activities$: Observable<any[]>;

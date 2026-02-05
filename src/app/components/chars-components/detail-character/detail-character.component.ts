@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { LegoCharacter } from "../../../models/characters.model";
 import { FavoritesService } from "../../../services/favorites.service";
 import { CommonModule } from "@angular/common";
@@ -9,12 +9,13 @@ import { Observable, tap, switchMap, of, map, BehaviorSubject, combineLatest } f
 import { ModalComponent } from "../../modal-component/modal.component";
 import { NavbarComponent } from "../../navbar/navbar.component";
 import { userRoleEnum } from "../../../models/profiles.model";
+import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.component";
 
 @Component({
   selector: 'app-detail-character',
   templateUrl: './detail-character.component.html',
   styleUrls: ['./detail-character.component.scss'],
-  imports: [NavbarComponent, FooterComponent, CommonModule, ModalComponent, RouterLink],
+  imports: [NavbarComponent, FooterComponent, CommonModule, ModalComponent, BreadcrumbComponent],
 })
 export class DetailCharacterComponent implements OnInit {
   character: Observable<LegoCharacter | null> = of(null);
