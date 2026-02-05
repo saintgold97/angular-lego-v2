@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FooterComponent } from '../../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { LegoCharacter, Project } from '../../../models/characters.model';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 import { ModalComponent } from '../../modal-component/modal.component';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { userRoleEnum } from '../../../models/profiles.model';
 import { SupabaseService } from '../../../supabase/supabase.service';
 import { SingleCharacterComponent } from "../../chars-components/single-character/single-character.component";
@@ -15,7 +13,7 @@ import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.compo
   selector: 'app-detail-project',
   templateUrl: './detail-project.component.html',
   styleUrls: ['./detail-project.component.scss'],
-  imports: [RouterLink, NavbarComponent, FooterComponent, CommonModule, ModalComponent, SingleCharacterComponent, BreadcrumbComponent],
+  imports: [RouterLink, CommonModule, ModalComponent, SingleCharacterComponent, BreadcrumbComponent],
 })
 
 export class DetailProjectComponent implements OnInit {

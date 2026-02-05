@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FooterComponent } from '../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { Project } from '../../models/characters.model';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { HeroSectionComponent } from '../hero-section/hero-section.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 import { userRoleEnum } from '../../models/profiles.model';
 import { ModalComponent } from "../modal-component/modal.component";
 import { GatewaySectionComponent } from "../gateway-section/gateway-section.component";
@@ -15,7 +13,7 @@ import { GatewaySectionComponent } from "../gateway-section/gateway-section.comp
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss'],
-  imports: [RouterLink, NavbarComponent, FooterComponent, CommonModule, HeroSectionComponent, ModalComponent, GatewaySectionComponent],
+  imports: [RouterLink, CommonModule, HeroSectionComponent, ModalComponent, GatewaySectionComponent],
 })
 
 export class ProjectComponent  {

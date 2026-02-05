@@ -1,6 +1,4 @@
 import { Component } from "@angular/core";
-import { NavbarComponent } from "../navbar/navbar.component";
-import { FooterComponent } from "../footer/footer.component";
 import { SupabaseService } from "../../supabase/supabase.service";
 import { HeroSectionComponent } from "../hero-section/hero-section.component";
 import { BehaviorSubject, Observable, of, switchMap, tap } from "rxjs";
@@ -15,7 +13,7 @@ import { GatewaySectionComponent } from "../gateway-section/gateway-section.comp
     selector: 'app-activities',
     templateUrl: './activities.component.html',
     styleUrls: ['./activities.component.scss'],
-    imports: [CommonModule, NavbarComponent, FooterComponent, HeroSectionComponent, AddActivityComponent, EditActivityComponent, ActivitiesTableComponent, ActivitiesListComponent, GatewaySectionComponent],
+    imports: [CommonModule, HeroSectionComponent, AddActivityComponent, EditActivityComponent, ActivitiesTableComponent, ActivitiesListComponent, GatewaySectionComponent],
 })
 export class ActivitiesComponent {
     activities$: Observable<any[]>;

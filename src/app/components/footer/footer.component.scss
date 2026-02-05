@@ -5,7 +5,13 @@
   color: white;
 
   .list-card {
-    padding: 20px;
+    padding: 16px 24px;
+
+    &.switch-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     .footer-subtitle {
       color: rgba(255, 255, 255, 0.4);
@@ -23,6 +29,7 @@
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
+      margin-bottom: 0;
 
       &:hover {
         color: #3b82f6;

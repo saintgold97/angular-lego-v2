@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LegoCharacter } from '../../../models/characters.model';
-import { FooterComponent } from '../../footer/footer.component';
 import { ModalComponent } from '../../modal-component/modal.component';
 import { RouterLink } from '@angular/router';
 import { SingleCharacterComponent } from '../single-character/single-character.component';
 import { SupabaseService } from '../../../supabase/supabase.service';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { HeroSectionComponent } from '../../hero-section/hero-section.component';
 import { userRoleEnum } from '../../../models/profiles.model';
 import { GatewaySectionComponent } from "../../gateway-section/gateway-section.component";
@@ -18,8 +16,6 @@ import { GatewaySectionComponent } from "../../gateway-section/gateway-section.c
   templateUrl: './characters.component.html',
   styleUrls: ['./characters.component.scss'],
   imports: [
-    NavbarComponent,
-    FooterComponent,
     ModalComponent,
     CommonModule,
     FormsModule,
