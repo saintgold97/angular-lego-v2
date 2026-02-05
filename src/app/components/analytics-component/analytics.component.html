@@ -1,0 +1,131 @@
+<div class="analytics-container animate__animated animate__fadeIn">
+  <header class="analytics-header text-center mb-5">
+    <h2 class="analytics-title display-6 fw-bold mb-2">
+      <i class="bi bi-bar-chart-line-fill me-2 text-primary"></i>Character Analytics
+    </h2>
+    <p class="text-muted">
+      <i class="bi bi-info-circle me-2"></i>
+      Real-time monitoring of character and project distribution
+    </p>
+  </header>
+
+  @if (stats$ | async; as stats) {
+  <div class="row g-4 mb-4 justify-content-center">
+    <div class="col-md-10">
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="card glass p-3 text-center h-100">
+            <small class="text-muted d-block mb-1">Total Items</small>
+            <span class="h4 fw-bold mb-0">{{ stats.gender.data[0] + stats.gender.data[1] }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card glass p-3 text-center h-100">
+            <small class="text-muted d-block mb-1">Projects</small>
+            <span class="h4 fw-bold mb-0 text-primary">{{ stats.projects.labels.length }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4 justify-content-center">
+    <div class="col-12 col-md-5">
+      <div class="card glass h-100 p-4 shadow-sm border-0">
+        <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">Demographics</h6>
+        <app-graph
+          [chartLabels]="stats.gender.labels"
+          [chartData]="stats.gender.data"
+          chartType="pie"
+          title="Gender Ratio"
+        ></app-graph>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-5">
+      <div class="card glass h-100 p-4 shadow-sm border-0">
+        <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">Geographic</h6>
+        <app-graph
+          [chartLabels]="stats.cities.labels"
+          [chartData]="stats.cities.data"
+          title="Origin Cities"
+          chartType="doughnut"
+        ></app-graph>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4 justify-content-center">
+    <div class="col-12 col-md-10">
+      <div class="card glass p-4 shadow-sm border-0">
+        <div class="d-flex align-items-center mb-4">
+          <i class="bi bi-patch-check-fill text-warning fs-4 me-2"></i>
+          <h5 class="mb-0">Project Scale Analysis</h5>
+        </div>
+        <div class="chart-wrapper" style="max-height: 450px">
+          @if (polarProjectData$ | async; as polarData) {
+          <app-graph
+            [multiDatasets]="polarData.datasets"
+            [chartLabels]="polarData.labels"
+            [options]="polarOptions"
+            chartType="polarArea"
+          ></app-graph>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    <div class="col-12 col-md-10">
+      <div class="card glass p-4 shadow-sm border-0">
+        <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">Engagement per Project</h6>
+        @if (stackedProjectData$ | async; as stackedData) {
+        <app-graph
+          [chartLabels]="stackedData.labels"
+          [multiDatasets]="stackedData.datasets"
+          title="Gender Distribution"
+          chartType="bar"
+        ></app-graph>
+        }
+      </div>
+    </div>
+  </div>
+
+  } @else {
+  <div class="d-flex flex-column align-items-center justify-content-center p-5 min-vh-50">
+    <div class="spinner-grow text-primary mb-3" role="status"></div>
+    <p class="text-muted fw-light">Processing analytics engine...</p>
+  </div>
+  }
+
+  <div class="card glass h-100 border-0 shadow-sm mt-5">
+    <div class="card-body">
+      <h6 class="text-uppercase fw-bold text-muted small mb-3">
+        <i class="bi bi-clock-history me-2"></i>Character recent Activity
+      </h6>
+
+      @if (recentActivities$ | async; as activities) {
+      <div class="list-group list-group-flush">
+        @for (act of activities; track $index) {
+        <div class="list-group-item bg-transparent border-0 px-0 py-2 d-flex align-items-center">
+          <div class="activity-icon me-3 bg-primary-subtle p-2 rounded-3 text-primary">
+            <i class="bi bi-plus-circle"></i>
+          </div>
+          <div>
+            <p class="mb-0 small fw-bold">Added "{{ act.name }} {{ act.lastname }}"</p>
+            <small class="text-muted"
+              >Project: {{ act.projects?.name }} • Created at:
+              {{ act.created_at | date : 'd MMM y' }}</small
+            >
+            <p class="text-muted small">{{ act.created_by }}</p>
+          </div>
+        </div>
+        }
+      </div>
+      } @else {
+      <p class="text-muted small">No recent activities found.</p>
+      }
+    </div>
+  </div>
+</div>

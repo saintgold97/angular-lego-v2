@@ -68,6 +68,21 @@ export class SupabaseService {
     );
   }
 
+  getProfileById(id: string): Observable<UserProfile | null> {
+    return from(
+      this.supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single()
+    ).pipe(
+      map(res => {
+        if (res.error) throw res.error;
+        return res.data || null;
+      })
+    );
+  }
+
   async updateProfile(formData: any) {
     const { data: { user } } = await this.supabase.auth.getUser();
     if (!user) throw new Error('No user found');
@@ -564,7 +579,7 @@ export class SupabaseService {
   }
 
   // ================= ACTIVITY =================
-  getActivities(userId?: string, projectId?: string): Observable<any[]> {
+  getActivities(userId?: string, projectId?: string, date?: string): Observable<any[]> {
     let query = this.supabase
       .from('activities')
       .select(`
@@ -580,6 +595,10 @@ export class SupabaseService {
 
     if (projectId) {
       query = query.eq('project_id', projectId);
+    }
+
+    if (date) {
+      query = query.eq('activity_date', date);
     }
 
     return from(query).pipe(

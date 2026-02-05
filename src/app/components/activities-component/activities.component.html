@@ -10,6 +10,8 @@
   <div class="container">
     <h3 class="recent-activities-title"><i class="bi bi-clock-history me-2"></i>My Recent Feed</h3>
 
+    <app-filter (filterChanged)="updateFilters($event)" [hideUserFilter]="true" />
+
     <div class="switch-container my-2">
       <span class="switch-label" id="switch-label">Switch View: </span>
       <button

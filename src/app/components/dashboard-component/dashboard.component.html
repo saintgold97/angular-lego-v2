@@ -1,319 +1,37 @@
-<div class="profile-page-container">
+<div class="dashboard-page-container">
   <app-sidebar
     [activeSection]="activeSection"
     (sectionChanged)="setSection($event)"
     class="profile-page-sidebar"
   ></app-sidebar>
 
-  <div class="profile-page animate__fadeIn">
+  <div class="dashboard-content animate__fadeIn">
     <div class="container">
       <!-- PROFILE -->
       @if (activeSection === dashboardSectionEnum.PERSONAL_INFO) {
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-8">
-          <div class="card profile-card glass">
-            <div class="card-body text-center">
-              <h2 class="mb-4">My Profile</h2>
-
-              <div class="avatar-container position-relative mb-4">
-                <div class="avatar-wrapper">
-                  @if (profileData$ | async; as profile) {
-                  <div class="avatar-wrapper">
-                    <img
-                      [src]="profile.avatar_url ? profile.avatar_url : defaultAvatar"
-                      class="profile-img"
-                    />
-                  </div>
-                  }
-
-                  <label for="avatarInput" class="avatar-edit-badge" [class.loading]="loading">
-                    @if (loading) {
-                    <span class="spinner-border spinner-border-sm"></span>
-                    } @else {
-                    <i class="bi bi-camera-fill"></i>
-                    }
-                  </label>
-                </div>
-                <input
-                  type="file"
-                  id="avatarInput"
-                  (change)="onFileSelected($event)"
-                  hidden
-                  accept="image/*"
-                />
-              </div>
-
-              @if (profileData$ | async; as profile) {
-              <h3 class="profile-email">{{ profile.email }}</h3>
-              <p class="profile-name">{{ profile.display_name }}</p>
-              <span
-                class="badge"
-                [ngClass]="{
-                  'bg-danger': (userRole$ | async) === roles.ADMIN,
-                  'bg-warning text-dark': (userRole$ | async) === roles.SUPERVISOR,
-                  'bg-info': (userRole$ | async) === roles.USER
-                }"
-              >
-                {{ userRole$ | async | uppercase }}
-              </span>
-              } @else {
-              <div class="text-center p-5">
-                <div class="spinner-border text-warning"></div>
-              </div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row justify-content-center animate__fadeIn">
-        <div class="col-lg-10">
-          <div class="card edit-profile-card glass p-4">
-            <h4 class="edit-title"><i class="bi bi-pencil-square me-2"></i>Edit Profile</h4>
-
-            <form (ngSubmit)="updateProfile()" [formGroup]="editProfileForm">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Email Address (Read Only)</label>
-                  <input
-                    type="email"
-                    class="form-control bg-light"
-                    formControlName="email"
-                    readonly
-                  />
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Display Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    [class.is-invalid]="
-                      editProfileForm.get('displayName')?.invalid &&
-                      editProfileForm.get('displayName')?.touched
-                    "
-                    formControlName="displayName"
-                  />
-                  <div class="invalid-feedback">Minimum 3 characters required.</div>
-                </div>
-
-                <hr class="my-4" />
-                <h5 class="mb-3"><i class="bi bi-shield-lock me-2"></i>Security Settings</h5>
-
-                <div class="row">
-                  <div class="col-md-12 mb-3">
-                    <label class="form-label fw-bold">Current Password</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      formControlName="currentPassword"
-                      [class.is-invalid]="
-                        editProfileForm.get('currentPassword')?.invalid &&
-                        editProfileForm.get('currentPassword')?.touched
-                      "
-                      placeholder="Enter your current password to make changes"
-                    />
-                    <div class="form-text">
-                      Required only if you want to change your password or sensitive data.
-                    </div>
-                  </div>
-
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">New Password</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      formControlName="password"
-                      placeholder="Min 6 characters"
-                    />
-                  </div>
-
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-control" formControlName="confirmPassword" />
-                  </div>
-                </div>
-
-                @if (editProfileForm.errors?.['passwordMismatch'] &&
-                editProfileForm.get('confirmPassword')?.touched) {
-                <div class="alert alert-danger py-2">Passwords do not match!</div>
-                }
-              </div>
-
-              <div class="mt-4 d-flex justify-content-end">
-                <button
-                  type="submit"
-                  class="btn btn-warning px-4 fw-bold"
-                  [disabled]="editProfileForm.invalid || loading || editProfileForm.pristine"
-                >
-                  Update Profile
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      <app-personal-profile class="animate__fadeIn" />
       }
 
       <!-- Users Management -->
       @if (activeSection === dashboardSectionEnum.ADMIN_PANEL && (userRole$ | async) ===
       roles.ADMIN) {
-      <app-admin-panel />
+      <app-admin-panel class="animate__fadeIn" />
       }
 
       <!-- Monitoring Activities -->
       @if (activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES && (userRole$ | async) !==
       roles.USER) {
-      <app-monitoring-activities />
+      <app-monitoring-activities class="animate__fadeIn" />
       }
 
       <!-- Analytics -->
       @if (activeSection === dashboardSectionEnum.ANALYTICS && (userRole$ | async) !== roles.USER) {
-      <div class="analytics-container animate__animated animate__fadeIn">
-        <header class="analytics-header text-center mb-5">
-          <h2 class="analytics-title display-6 fw-bold mb-2">
-            <i class="bi bi-bar-chart-line-fill me-2 text-primary"></i>Character Analytics
-          </h2>
-          <p class="text-muted">
-            <i class="bi bi-info-circle me-2"></i>
-            Real-time monitoring of character and project distribution
-          </p>
-        </header>
-
-        @if (stats$ | async; as stats) {
-        <div class="row g-4 mb-4 justify-content-center">
-          <div class="col-md-10">
-            <div class="row g-3">
-              <div class="col-6 col-md-3">
-                <div class="card glass p-3 text-center h-100">
-                  <small class="text-muted d-block mb-1">Total Items</small>
-                  <span class="h4 fw-bold mb-0">{{
-                    stats.gender.data[0] + stats.gender.data[1]
-                  }}</span>
-                </div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="card glass p-3 text-center h-100">
-                  <small class="text-muted d-block mb-1">Projects</small>
-                  <span class="h4 fw-bold mb-0 text-primary">{{
-                    stats.projects.labels.length
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-4 mb-4 justify-content-center">
-          <div class="col-12 col-md-5">
-            <div class="card glass h-100 p-4 shadow-sm border-0">
-              <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">Demographics</h6>
-              <app-graph
-                [chartLabels]="stats.gender.labels"
-                [chartData]="stats.gender.data"
-                chartType="pie"
-                title="Gender Ratio"
-              ></app-graph>
-            </div>
-          </div>
-
-          <div class="col-12 col-md-5">
-            <div class="card glass h-100 p-4 shadow-sm border-0">
-              <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">Geographic</h6>
-              <app-graph
-                [chartLabels]="stats.cities.labels"
-                [chartData]="stats.cities.data"
-                title="Origin Cities"
-                chartType="doughnut"
-              ></app-graph>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-4 mb-4 justify-content-center">
-          <div class="col-12 col-md-10">
-            <div class="card glass p-4 shadow-sm border-0">
-              <div class="d-flex align-items-center mb-4">
-                <i class="bi bi-patch-check-fill text-warning fs-4 me-2"></i>
-                <h5 class="mb-0">Project Scale Analysis</h5>
-              </div>
-              <div class="chart-wrapper" style="max-height: 450px">
-                @if (polarProjectData$ | async; as polarData) {
-                <app-graph
-                  [multiDatasets]="polarData.datasets"
-                  [chartLabels]="polarData.labels"
-                  [options]="polarOptions"
-                  chartType="polarArea"
-                ></app-graph>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-4 justify-content-center">
-          <div class="col-12 col-md-10">
-            <div class="card glass p-4 shadow-sm border-0">
-              <h6 class="text-uppercase ls-1 fw-bold mb-4 text-muted small">
-                Engagement per Project
-              </h6>
-              @if (stackedProjectData$ | async; as stackedData) {
-              <app-graph
-                [chartLabels]="stackedData.labels"
-                [multiDatasets]="stackedData.datasets"
-                title="Gender Distribution"
-                chartType="bar"
-              ></app-graph>
-              }
-            </div>
-          </div>
-        </div>
-
-        } @else {
-        <div class="d-flex flex-column align-items-center justify-content-center p-5 min-vh-50">
-          <div class="spinner-grow text-primary mb-3" role="status"></div>
-          <p class="text-muted fw-light">Processing analytics engine...</p>
-        </div>
-        }
-
-        <div class="card glass h-100 border-0 shadow-sm mt-5">
-          <div class="card-body">
-            <h6 class="text-uppercase fw-bold text-muted small mb-3">
-              <i class="bi bi-clock-history me-2"></i>Character recent Activity
-            </h6>
-
-            @if (recentActivities$ | async; as activities) {
-            <div class="list-group list-group-flush">
-              @for (act of activities; track $index) {
-              <div
-                class="list-group-item bg-transparent border-0 px-0 py-2 d-flex align-items-center"
-              >
-                <div class="activity-icon me-3 bg-primary-subtle p-2 rounded-3 text-primary">
-                  <i class="bi bi-plus-circle"></i>
-                </div>
-                <div>
-                  <p class="mb-0 small fw-bold">Added "{{ act.name }} {{ act.lastname }}"</p>
-                  <small class="text-muted"
-                    >Project: {{ act.projects?.name }} • Created at:
-                    {{ act.created_at | date : 'd MMM y' }}</small
-                  >
-                  <p class="text-muted small">{{ act.created_by }}</p>
-                </div>
-              </div>
-              }
-            </div>
-            } @else {
-            <p class="text-muted small">No recent activities found.</p>
-            }
-          </div>
-        </div>
-      </div>
+      <app-analytics class="animate__fadeIn" />
       }
 
       <!-- Favorites -->
       @if(activeSection === dashboardSectionEnum.FAVORITES) {
-      <div class="favorites-container animate__animated animate__fadeIn">
-        <app-favorite-components />
-      </div>
+      <app-favorite-components class="animate__fadeIn" />
       }
     </div>
   </div>

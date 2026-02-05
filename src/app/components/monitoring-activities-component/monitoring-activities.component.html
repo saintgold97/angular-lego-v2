@@ -4,30 +4,10 @@
     <i class="bi bi-info-circle me-2"></i>
     Log of all activities
   </p>
-  <div class="d-flex align-items-center gap-2">
-    <span class="text-nowrap small fw-bold text-uppercase">Filter:</span>
-    <select
-      id="user-select"
-      class="form-select border-0 shadow-sm custom-select"
-      (change)="onUserChange($event)"
-    >
-      <option value="">All Users</option>
-      @for (profile of allProfiles$ | async; track profile.id) {
-      <option [value]="profile.id">{{ profile.email }}</option>
-      }
-    </select>
-    <select
-      id="project-select"
-      class="form-select border-0 shadow-sm custom-select"
-      (change)="onProjectChange($event)"
-    >
-      <option value="">All Projects</option>
-      @for (project of allProjects$ | async; track project.id) {
-      <option [value]="project.id">{{ project.name }}</option>
-      }
-    </select>
-  </div>
-  <div class="switch-container mt-2">
+
+  <app-filter (filterChanged)="updateFilters($event)" />
+
+  <div class="switch-container mt-3">
     <span class="switch-label" id="switch-label">Switch View: </span>
     <button
       type="button"
@@ -53,9 +33,9 @@
 </header>
 
 @if(switchSection) {
-  <app-activities-list [activities]="activities$ | async" [hideButtons]="true"/>
+  <app-activities-list [activities]="activities$ | async" [hideButtons]="true" />
 } @else {
 <section class="admin-activities-section p-4 animate__fadeIn">
-  <app-activities-table [activities]="activities$ | async" [hideButtons]="true"/>
+  <app-activities-table [activities]="activities$ | async" [hideButtons]="true" />
 </section>
 }

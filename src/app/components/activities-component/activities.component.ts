@@ -1,19 +1,29 @@
 import { Component } from "@angular/core";
 import { SupabaseService } from "../../supabase/supabase.service";
 import { HeroSectionComponent } from "../hero-section/hero-section.component";
-import { BehaviorSubject, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { EditActivityComponent } from "./edit-activity-component/edit-activity.component";
 import { AddActivityComponent } from "./add-activity-component/add-activity.component";
 import { ActivitiesTableComponent } from "../monitoring-activities-component/activities-table-component/activities-table.component";
 import { ActivitiesListComponent } from "../monitoring-activities-component/activities-list-component/activities-list.component";
 import { GatewaySectionComponent } from "../gateway-section/gateway-section.component";
+import { FilterComponent } from "../filter-component/filter.component";
 
 @Component({
     selector: 'app-activities',
     templateUrl: './activities.component.html',
     styleUrls: ['./activities.component.scss'],
-    imports: [CommonModule, HeroSectionComponent, AddActivityComponent, EditActivityComponent, ActivitiesTableComponent, ActivitiesListComponent, GatewaySectionComponent],
+    imports: [
+        CommonModule,
+        HeroSectionComponent,
+        AddActivityComponent,
+        EditActivityComponent,
+        ActivitiesTableComponent,
+        ActivitiesListComponent,
+        GatewaySectionComponent,
+        FilterComponent
+    ],
 })
 export class ActivitiesComponent {
     activities$: Observable<any[]>;
@@ -25,13 +35,22 @@ export class ActivitiesComponent {
     selectedActivity: any | null = null;
     isEditOpen: boolean = false;
     switchSection: boolean = false;
+    private filters$ = new BehaviorSubject<{ projectId: string, date: string }>({
+        projectId: '',
+        date: ''
+    });
+
 
     constructor(private supabase: SupabaseService) {
-        this.activities$ = this.refresh$.pipe(
-            switchMap(() => this.supabase.user$),
-            switchMap(user => {
+        this.activities$ = combineLatest([
+            this.refresh$,
+            this.filters$,
+            this.supabase.user$
+        ]).pipe(
+            switchMap(([_, filters, user]) => {
                 if (!user) return of([]);
-                return this.supabase.getActivities(user.id);
+                this.uploading = true;
+                return this.supabase.getActivities(user.id, filters.projectId, filters.date);
             }),
             tap(() => this.uploading = false)
         );
@@ -66,5 +85,9 @@ export class ActivitiesComponent {
 
     handleSwitchSection() {
         this.switchSection = !this.switchSection;
+    }
+
+    updateFilters(newFilters: any) {
+        this.filters$.next(newFilters);
     }
 }
