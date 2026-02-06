@@ -1,17 +1,24 @@
 <div class="sidebar-container">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <i class="bi" [ngClass]="isSidebarOpen ? 'bi-x-lg' : 'bi-list'"></i>
+  <button class="sidebar-toggle shadow" (click)="toggleSidebar()">
+    <i class="bi" [ngClass]="isSidebarOpen ? 'bi-x' : 'bi-filter-left'"></i>
   </button>
 
-  <div class="sidebar" [class.active]="isSidebarOpen">
+  <div id="sidebar" class="sidebar" [class.active]="isSidebarOpen">
     <div class="menu">
-      <h2 class="menu-title">Dashboard</h2>
+      <div class="d-flex align-items-center px-3 mb-4">
+        <div class="logo-box me-2"><i class="bi bi-grid-1x2-fill text-primary"></i></div>
+        <h2 class="menu-title mb-0">Dashboard</h2>
+      </div>
+
       <ul class="menu-list">
         <li class="list-item">
-          <a routerLink="/home" class="link-item" (click)="isSidebarOpen = false"
-            ><i class="bi bi-house-fill me-2"></i>Home</a
-          >
+          <a routerLink="/home" class="link-item" (click)="closeSidebar()"
+            ><i class="bi bi-house me-3"></i>Home
+          </a>
         </li>
+
+        <div class="menu-divider my-3"></div>
+
         <li class="list-item">
           <a
             (click)="setSection(dashboardSectionEnum.PERSONAL_INFO)"
@@ -20,7 +27,7 @@
             [fragment]="dashboardSectionEnum.PERSONAL_INFO"
             [routerLink]="['/dashboard']"
           >
-            <i class="bi bi-person-circle me-2"></i>My Profile
+            <i class="bi bi-person me-3"></i>My Profile
           </a>
         </li>
 
@@ -33,24 +40,20 @@
             [fragment]="dashboardSectionEnum.ADMIN_PANEL"
             [routerLink]="['/dashboard']"
           >
-            <i class="bi bi-people-fill me-2"></i>Users Management
+            <i class="bi bi-people me-3"></i>Users Management
           </a>
         </li>
-
-        @if ((userRole$ | async) === roles.ADMIN) {
-          <li class="list-item">
-            <a
-              (click)="setSection(dashboardSectionEnum.MONITORING_ACTIVITIES)"
-              class="link-item"
-              [class.active]="activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES"
-              [fragment]="dashboardSectionEnum.MONITORING_ACTIVITIES"
-              [routerLink]="['/dashboard']"
-            >
-              <i class="bi bi-activity me-2"></i>Monitoring activities
-            </a>
-          </li>
-          }
-
+        <li class="list-item">
+          <a
+            (click)="setSection(dashboardSectionEnum.MONITORING_ACTIVITIES)"
+            class="link-item"
+            [class.active]="activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES"
+            [fragment]="dashboardSectionEnum.MONITORING_ACTIVITIES"
+            [routerLink]="['/dashboard']"
+          >
+            <i class="bi bi-speedometer2 me-3"></i>Monitoring
+          </a>
+        </li>
         } @if ((userRole$ | async) !== roles.USER) {
         <li class="list-item">
           <a
@@ -60,7 +63,7 @@
             [fragment]="dashboardSectionEnum.ANALYTICS"
             [routerLink]="['/dashboard']"
           >
-            <i class="bi bi-graph-up me-2"></i>Analytics
+            <i class="bi bi-graph-up-arrow me-3"></i>Analytics
           </a>
         </li>
         }
@@ -73,20 +76,18 @@
             [fragment]="dashboardSectionEnum.FAVORITES"
             [routerLink]="['/dashboard']"
           >
-            <i class="bi bi-star-fill me-2"></i>Favorites
+            <i class="bi bi-bookmark-star me-3"></i>Favorites
           </a>
-        </li>
-
-        <li class="list-item">
-          <button class="btn btn-danger" (click)="signOutHandler()">
-            <i class="bi bi-box-arrow-right"></i>Logout
-          </button>
         </li>
       </ul>
     </div>
-    <div class="sidebar-footer">
+
+    <div class="sidebar-footer border-top pt-3 mx-2">
       <app-theme-switcher />
-      <div class="info">© 2026 All rights reserved.</div>
+      <button class="btn btn-danger btn-sm w-100 mt-3" (click)="signOutHandler()">
+        <i class="bi bi-box-arrow-right me-2"></i>Logout
+      </button>
+      <div class="info mt-2 text-center opacity-50 ultra-small">v1.2.0 © 2026</div>
     </div>
   </div>
 </div>

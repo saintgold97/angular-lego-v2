@@ -2,11 +2,12 @@ import { Component, computed, EventEmitter, Input, Output, signal } from '@angul
 import { CommonModule } from '@angular/common';
 import { Activity } from '../../../models/activities.model';
 import { getPriorityClass, getTypeIcon, getTypeClass } from '../../../utils/activity-utils';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-activities-table',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './activities-table.component.html',
     styleUrls: ['./activities-table.component.scss']
 })

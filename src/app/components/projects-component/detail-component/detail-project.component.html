@@ -1,21 +1,11 @@
-<app-navbar></app-navbar>
-
 @if (projectData$ | async; as project) {
-<!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="main-breadcrumb container">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
-    <li class="breadcrumb-item"><a routerLink="/projects">Projects</a></li>
-    <li class="breadcrumb-item active" aria-current="page">
-      {{ project.name }}
-    </li>
-  </ol>
-</nav>
-<!-- /Breadcrumb -->
 
 <section class="project-detail-page">
   <div class="container">
     <div class="main-body">
+      <!-- Breadcrumb -->
+      <app-breadcrumb [detailName]="project.name" parentLabel="Projects" parentLink="/projects" />
+      <!-- /Breadcrumb -->
       <h2 class="project-detail-title mb-4">Project Details</h2>
       <div class="row justify-content-center">
         <div class="col-md-10">
@@ -25,21 +15,21 @@
                 <div class="col-sm-3">
                   <h6 class="mb-0">Name</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">{{ project.name }}</div>
+                <div class="col-sm-9">{{ project.name }}</div>
               </div>
               <hr />
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Description</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">{{ project.description }}</div>
+                <div class="col-sm-9">{{ project.description }}</div>
               </div>
               <hr />
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Start Date</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">
+                <div class="col-sm-9">
                   {{ project.start_date }}
                 </div>
               </div>
@@ -48,7 +38,7 @@
                 <div class="col-sm-3">
                   <h6 class="mb-0">End Date</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">
+                <div class="col-sm-9">
                   {{ project.end_date ? project.end_date : 'Ongoing' }}
                 </div>
               </div>
@@ -57,7 +47,7 @@
                 <div class="col-sm-3">
                   <h6 class="mb-0">Total Members</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">
+                <div class="col-sm-9">
                   {{ project.totalMembers }}
                 </div>
               </div>
@@ -128,5 +118,3 @@
   </div>
 </div>
 }
-
-<app-footer></app-footer>

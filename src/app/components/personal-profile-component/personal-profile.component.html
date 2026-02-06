@@ -1,0 +1,139 @@
+<section class="personal-profile-section my-5">
+  @if (profileData$ | async; as profile) {
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+      <div class="card profile-card glass">
+        <div class="card-body text-center">
+          <h2 class="mb-4">My Profile</h2>
+
+          <div class="avatar-container position-relative mb-4">
+            <div class="avatar-wrapper">
+              <div class="avatar-wrapper">
+                <img
+                  [src]="profile.avatar_url ? profile.avatar_url : defaultAvatar"
+                  class="profile-img"
+                />
+              </div>
+
+              <label for="avatarInput" class="avatar-edit-badge" [class.loading]="loading">
+                @if (loading) {
+                <span class="spinner-border spinner-border-sm"></span>
+                } @else {
+                <i class="bi bi-camera-fill"></i>
+                }
+              </label>
+            </div>
+            <input
+              type="file"
+              id="avatarInput"
+              (change)="onFileSelected($event)"
+              hidden
+              accept="image/*"
+            />
+          </div>
+          <h3 class="profile-email">{{ profile.email }}</h3>
+          <p class="profile-name">{{ profile.display_name }}</p>
+          <span
+            class="badge"
+            [ngClass]="{
+              'bg-danger': (userRole$ | async) === roles.ADMIN,
+              'bg-warning text-dark': (userRole$ | async) === roles.SUPERVISOR,
+              'bg-info': (userRole$ | async) === roles.USER
+            }"
+          >
+            {{ userRole$ | async | uppercase }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center animate__fadeIn">
+    <div class="col-lg-10">
+      <div class="card edit-profile-card glass p-4">
+        <h4 class="edit-title"><i class="bi bi-pencil-square me-2"></i>Edit Profile</h4>
+
+        <form (ngSubmit)="updateProfile()" [formGroup]="editProfileForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Email Address (Read Only)</label>
+              <input type="email" class="form-control bg-light" formControlName="email" readonly />
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Display Name</label>
+              <input
+                type="text"
+                class="form-control"
+                [class.is-invalid]="
+                  editProfileForm.get('displayName')?.invalid &&
+                  editProfileForm.get('displayName')?.touched
+                "
+                formControlName="displayName"
+              />
+              <div class="invalid-feedback">Minimum 3 characters required.</div>
+            </div>
+
+            <hr class="my-4" />
+            <h5 class="mb-3"><i class="bi bi-shield-lock me-2"></i>Security Settings</h5>
+
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">Current Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="currentPassword"
+                  [class.is-invalid]="
+                    editProfileForm.get('currentPassword')?.invalid &&
+                    editProfileForm.get('currentPassword')?.touched
+                  "
+                  placeholder="Enter your current password to make changes"
+                />
+                <div class="form-text">
+                  Required only if you want to change your password or sensitive data.
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">New Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Min 6 characters"
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" formControlName="confirmPassword" />
+              </div>
+            </div>
+
+            @if (editProfileForm.errors?.['passwordMismatch'] &&
+            editProfileForm.get('confirmPassword')?.touched) {
+            <div class="alert alert-danger py-2">Passwords do not match!</div>
+            }
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end">
+            <button
+              type="submit"
+              class="btn btn-warning px-4 fw-bold"
+              [disabled]="editProfileForm.invalid || loading || editProfileForm.pristine"
+            >
+              Update Profile
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 400px">
+    <div class="spinner-border text-warning" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  }
+</section>

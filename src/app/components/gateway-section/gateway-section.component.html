@@ -1,0 +1,47 @@
+<section class="gateway-section">
+  @if (userRole$ | async; as role) {
+  <div class="container">
+    <div class="gateway-card">
+      <div class="row g-0">
+        <div class="col-md-8 gateway-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="status-indicator ripple me-2"></div>
+            <span class="text-primary fw-bold small text-uppercase tracking-wider">
+              Management System Online
+            </span>
+          </div>
+
+          <h2 class="text-white h1 fw-bold mb-3">
+            {{ getTexts(role).title }}
+          </h2>
+          <p class="text-light opacity-75 mb-4">
+            {{ getTexts(role).desc }}
+          </p>
+
+          <div class="d-flex gap-3">
+            <button [routerLink]="['/dashboard']" class="btn btn-primary btn-lg px-4 fw-bold">
+              Go to Dashboard <i class="bi bi-rocket-takeoff ms-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="col-md-4 d-none d-md-flex gateway-visual align-items-center justify-content-center"
+        >
+          <div class="visual-circle">
+            <i
+              class="bi"
+              [ngClass]="{
+                'bi-shield-lock': role === 'admin',
+                'bi-eye': role === 'supervisor',
+                'bi-person-check': role === 'user'
+              }"
+              class="text-white display-1"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</section>

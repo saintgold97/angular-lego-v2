@@ -174,7 +174,6 @@ export class ModalComponent implements OnInit, OnChanges {
         try {
             const { member_ids, ...projectData } = this.legoProjectForm.value;
 
-            // Gestione date vuote
             if (!projectData.end_date) projectData.end_date = null;
 
             if (this.editProject?.id) {
@@ -236,12 +235,12 @@ export class ModalComponent implements OnInit, OnChanges {
         }
 
         control?.setValue(currentIds);
-        control?.markAsDirty(); // Segnala che l'utente sta modificando
+        control?.markAsDirty();
         this.cdr.detectChanges();
     }
 
     closeModalAction() {
-        (document.activeElement as HTMLElement)?.blur(); // Force Remove focus from any active element
+        (document.activeElement as HTMLElement)?.blur();
         if (this.closeModal) {
             this.closeModal.nativeElement.click();
         }

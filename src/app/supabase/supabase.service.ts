@@ -68,6 +68,21 @@ export class SupabaseService {
     );
   }
 
+  getProfileById(id: string): Observable<UserProfile | null> {
+    return from(
+      this.supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id)
+        .single()
+    ).pipe(
+      map(res => {
+        if (res.error) throw res.error;
+        return res.data || null;
+      })
+    );
+  }
+
   async updateProfile(formData: any) {
     const { data: { user } } = await this.supabase.auth.getUser();
     if (!user) throw new Error('No user found');
@@ -198,8 +213,9 @@ export class SupabaseService {
           name,
           description,
           start_date,
-          end_date)
-          `);
+          end_date),
+          author:profiles!created_by (email)
+          `).order('created_at', { ascending: false });
 
         if (role === userRoleEnum.SUPERVISOR) {
           query = query.eq('created_by', user.id);
@@ -266,7 +282,8 @@ export class SupabaseService {
           description,
           start_date,
           end_date
-        )
+        ),
+        author:profiles!created_by (email)
       `)
       .eq('id', id)
       .single();
@@ -463,7 +480,7 @@ export class SupabaseService {
     }
   }
 
-  // ================= DASHBOARD STATISTICS =================
+  // ================= DASHBOARD STATISTICS CHARACTERS =================
   getGlobalDashboardStats(): Observable<any> {
     return this.user$.pipe(
       switchMap(user => {
@@ -556,7 +573,7 @@ export class SupabaseService {
   async getRecentCharactersActivity(): Promise<any> {
     const { data, error } = await this.supabase
       .from('characters')
-      .select('name, lastname, created_at, projects(name)')
+      .select('name, lastname, created_at, projects(name), profiles!created_by(email)')
       .order('created_at', { ascending: false })
       .limit(5);
 
@@ -564,7 +581,7 @@ export class SupabaseService {
   }
 
   // ================= ACTIVITY =================
-  getActivities(userId?: string, projectId?: string): Observable<any[]> {
+  getActivities(userId?: string, projectId?: string, date?: string): Observable<any[]> {
     let query = this.supabase
       .from('activities')
       .select(`
@@ -580,6 +597,10 @@ export class SupabaseService {
 
     if (projectId) {
       query = query.eq('project_id', projectId);
+    }
+
+    if (date) {
+      query = query.eq('activity_date', date);
     }
 
     return from(query).pipe(
@@ -611,5 +632,29 @@ export class SupabaseService {
         .delete()
         .eq('id', id)
     );
+  }
+
+  // ================ DASHBOARD STATISTICS TIME LOGS ================
+  async getTimeLogs() {
+    const { data, error } = await this.supabase
+      .from('activities')
+      .select(`
+      working_hours,
+      projects ( name ),
+      profiles ( email ),
+      activity_date
+    `);
+
+    if (error) {
+      console.error("Error fetching time logs:", error);
+      return [];
+    }
+
+    return data.map(log => ({
+      hours: Number(log.working_hours) || 0,
+      project_name: (log.projects as any)?.name || 'Unknown Project',
+      profile_email: (log.profiles as any)?.email || 'Unknown Email',
+      date: log.activity_date,
+  }));
   }
 }

@@ -1,1 +1,11 @@
-<router-outlet />
+@if (showNavFooter) {
+    <app-navbar />
+  }
+
+  <main>
+    <router-outlet />
+  </main>
+
+  @if (showNavFooter) {
+    <app-footer />
+  }

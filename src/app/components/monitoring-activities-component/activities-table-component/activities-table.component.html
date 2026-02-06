@@ -8,7 +8,6 @@
         <th>Priority</th>
         <th>Type</th>
         <th>Hours</th>
-        <th>Created at</th>
         @if(!hideButtons){
         <th class="text-end px-4">Actions</th>
         }
@@ -24,8 +23,8 @@
           [style.vertical-align]="'top'"
         >
           @if(isFirst) {
-          <div class="sticky-top pt-2">
-            {{ group.projectName }}
+          <div class="pt-2">
+            <a class="text-decoration-none" [routerLink]="['/projects', group.projectId]">{{ group.projectName }}</a>
           </div>
           }
         </td>
@@ -43,7 +42,7 @@
             }
           </div>
           <div
-            class="small text-dark ms-2"
+            class="small ms-2"
             [ngClass]="[!hideProfileDetails ? 'ps-4 border-start' : '']"
           >
             {{ act.notes }}
@@ -70,10 +69,7 @@
           </span>
         </td>
 
-        <td class="text-end px-4 fw-bold">{{ act.working_hours }}h</td>
-        <td class="small text-muted text-nowrap">
-          {{ act.created_at | date : 'dd MMM yy, HH:mm' }}
-        </td>
+        <td class="px-4 fw-bold">{{ act.working_hours }}h</td>
 
         @if(!hideButtons){
         <td class="text-end px-4">

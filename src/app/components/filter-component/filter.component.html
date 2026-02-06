@@ -1,0 +1,56 @@
+<div class="filter-container">
+  <div class="filter-header">
+    <span class="filter-label"> <i class="bi bi-filter-left"></i> Filter Activities </span>
+  </div>
+
+  <div class="filter-body">
+    <div class="row g-2 align-items-center justify-content-evenly">
+      @if(!hideUserFilter) {
+      <div class="col-6 col-lg-4">
+        <select id="user-select" class="form-select custom-select" (change)="onUserChange($event)">
+          <option value="">All Users</option>
+          @for (profile of allProfiles$ | async; track profile.id) {
+          <option [value]="profile.id">{{ profile.email }}</option>
+          }
+        </select>
+      </div>
+      }
+
+      <div class="col-6 col-md-4">
+        <select
+          id="project-select"
+          class="form-select custom-select"
+          (change)="onProjectChange($event)"
+        >
+          <option value="">All Projects</option>
+          @for (project of allProjects$ | async; track project.id) {
+          <option [value]="project.id">{{ project.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-6 col-md-4">
+        <div class="date-input-wrapper">
+          <input
+            type="date"
+            id="dateFilter"
+            class="form-control custom-date"
+            (change)="onDateChange($event)"
+          />
+        </div>
+      </div>
+
+      <div class="col-3 col-md-2">
+        <button
+          class="btn-reset w-100"
+          (click)="resetFilters()"
+          title="Reset Filters"
+          type="button"
+        >
+          <i class="bi bi-arrow-counterclockwise me-1"></i>
+          <span class="d-none d-xl-inline">Reset</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

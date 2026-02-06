@@ -1,0 +1,47 @@
+.main-breadcrumb {
+    padding: 12px 20px;
+    background-color: #0b1120;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: inline-block;
+    margin-bottom: 1.5rem;
+
+    .breadcrumb {
+        margin-bottom: 0;
+        align-items: center;
+
+        .breadcrumb-item {
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+
+            .breadcrumb-link {
+                text-decoration: none;
+                transition: all 0.3s ease;
+                color: rgba(255, 255, 255, 0.7);
+
+                &:hover {
+                    color: #3b82f6;
+                    transform: translateY(-1px);
+                }
+            }
+
+            &.active {
+                color: rgba(255, 255, 255);
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            }
+
+            // Add a custom separator using the ::before pseudo-element
+            &+.breadcrumb-item::before {
+                content: "\F285";
+                font-family: "bootstrap-icons";
+                color: rgba(255, 255, 255, 0.2);
+                font-size: 0.7rem;
+                padding-right: 12px;
+            }
+        }
+    }
+}
