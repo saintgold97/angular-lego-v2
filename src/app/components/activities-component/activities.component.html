@@ -12,28 +12,36 @@
 
     <app-filter (filterChanged)="updateFilters($event)" [hideUserFilter]="true" />
 
-    <div class="switch-container my-2">
-      <span class="switch-label" id="switch-label">Switch View: </span>
-      <button
-        type="button"
-        class="view-switcher-btn"
-        [class.active]="switchSection"
-        (click)="handleSwitchSection()"
-        role="switch"
-        [attr.aria-checked]="switchSection"
-        aria-labelledby="switch-label"
-      >
-        <span class="switch-track">
-          <span class="switch-thumb">
-            <i class="bi" [ngClass]="switchSection ? 'bi-card-list' : 'bi-table'"></i>
-          </span>
+    <div class="actions-container">
+      <div class="switch-container my-2">
+        <span class="switch-label" id="switch-label">Switch View: </span>
+        <button
+          type="button"
+          class="view-switcher-btn"
+          [class.active]="switchSection"
+          (click)="handleSwitchSection()"
+          role="switch"
+          [attr.aria-checked]="switchSection"
+          aria-labelledby="switch-label"
+        >
+          <span class="switch-track">
+            <span class="switch-thumb">
+              <i class="bi" [ngClass]="switchSection ? 'bi-card-list' : 'bi-table'"></i>
+            </span>
 
-          <span class="switch-labels">
-            <span class="label-text" [class.hidden]="!switchSection">List</span>
-            <span class="label-text" [class.hidden]="switchSection">Table</span>
+            <span class="switch-labels">
+              <span class="label-text" [class.hidden]="!switchSection">List</span>
+              <span class="label-text" [class.hidden]="switchSection">Table</span>
+            </span>
           </span>
-        </span>
-      </button>
+        </button>
+      </div>
+      <app-export-data
+        [dataCount]="(activities$ | async)?.length || 0"
+        [isExporting]="loadingExport"
+        (onConfirm)="handleExport($event)"
+      >
+      </app-export-data>
     </div>
 
     @if(switchSection) {

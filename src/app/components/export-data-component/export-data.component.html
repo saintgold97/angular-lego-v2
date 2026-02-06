@@ -1,0 +1,41 @@
+<div class="export-widget shadow-sm border rounded bg-white p-2">
+  <div class="d-flex align-items-center gap-2">
+    <div class="flex-grow-1">
+      <select
+        class="form-select form-select-sm"
+        [(ngModel)]="selectedFormat"
+        [disabled]="isExporting"
+      >
+        <option value="xlsx">Excel (.xlsx)</option>
+        <option value="pdf">Document (.pdf)</option>
+      </select>
+    </div>
+
+    <button
+      class="btn btn-sm"
+      [ngClass]="selectedFormat === 'xlsx' ? 'btn-success' : 'btn-danger'"
+      (click)="confirm()"
+      [disabled]="isExporting || dataCount === 0"
+    >
+      @if(!isExporting){
+      <i
+        [class]="selectedFormat === 'xlsx' ? 'bi bi-file-earmark-excel' : 'bi bi-file-earmark-pdf'"
+      ></i>
+      } @else {
+      <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+
+      <span class="ms-1 d-none d-sm-inline">
+        {{ isExporting ? 'Generation...' : 'Download' }}
+      </span>
+    </button>
+  </div>
+
+  <div class="text-center mt-1" style="font-size: 0.75rem">
+    @if(dataCount > 0){
+    <span class="text-muted"> {{ dataCount }} record are available </span>
+    } @else if(dataCount === 0){
+    <span class="text-danger"> No data available </span>
+    }
+  </div>
+</div>

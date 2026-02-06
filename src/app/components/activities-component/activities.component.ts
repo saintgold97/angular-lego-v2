@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { SupabaseService } from "../../supabase/supabase.service";
 import { HeroSectionComponent } from "../hero-section/hero-section.component";
-import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap, take } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { EditActivityComponent } from "./edit-activity-component/edit-activity.component";
 import { AddActivityComponent } from "./add-activity-component/add-activity.component";
@@ -9,6 +9,9 @@ import { ActivitiesTableComponent } from "../monitoring-activities-component/act
 import { ActivitiesListComponent } from "../monitoring-activities-component/activities-list-component/activities-list.component";
 import { GatewaySectionComponent } from "../gateway-section/gateway-section.component";
 import { FilterComponent } from "../filter-component/filter.component";
+import { ExportDataComponent } from "../export-data-component/export-data.component";
+import { ExportService } from "../../services/export.service";
+import { Activity } from "../../models/activities.model";
 
 @Component({
     selector: 'app-activities',
@@ -22,7 +25,8 @@ import { FilterComponent } from "../filter-component/filter.component";
         ActivitiesTableComponent,
         ActivitiesListComponent,
         GatewaySectionComponent,
-        FilterComponent
+        FilterComponent,
+        ExportDataComponent
     ],
 })
 export class ActivitiesComponent {
@@ -39,9 +43,10 @@ export class ActivitiesComponent {
         projectId: '',
         date: ''
     });
+    loadingExport: boolean = false;
 
 
-    constructor(private supabase: SupabaseService) {
+    constructor(private supabase: SupabaseService, private exportService: ExportService) {
         this.activities$ = combineLatest([
             this.refresh$,
             this.filters$,
@@ -89,5 +94,44 @@ export class ActivitiesComponent {
 
     updateFilters(newFilters: any) {
         this.filters$.next(newFilters);
+    }
+
+    handleExport(format: 'xlsx' | 'pdf') {
+        this.loadingExport = true;
+
+        this.activities$.pipe(take(1)).subscribe({
+            next: (data) => {
+                const fileName = `Report_Activities_${new Date().toISOString().split('T')[0]}`;
+
+                if (format === 'xlsx') {
+                    const mappedData = data.map((act: Activity) => ({
+                        'Date': new Date(act.activity_date).toLocaleDateString('it-IT'),
+                        'Project': act.project?.name || 'N/A',
+                        'Notes': act.notes || '',
+                        'Hours': act.working_hours,
+                        'Priority': act.priority,
+                        'Type': act.activity_type,
+                    }));
+                    this.exportService.exportAsExcelFile(mappedData, fileName);
+                } else {
+                    const columns = ['Date', 'Project', 'Notes', 'Hours', 'Priority', 'Type'];
+                    const rows = data.map((act: Activity) => [
+                        new Date(act.activity_date).toLocaleDateString('it-IT'),
+                        act.project?.name || 'N/A',
+                        act.notes,
+                        act.working_hours,
+                        act.priority,
+                        act.activity_type
+                    ]);
+                    this.exportService.exportAsPdfFile(columns, rows, fileName, 'Activities Report');
+                }
+                this.loadingExport = false;
+            },
+            error: (err) => {
+                console.error('Export failed', err);
+                this.errorMessage = 'Error exporting data. Please try again.';
+                this.loadingExport = false;
+            }
+        });
     }
 }
