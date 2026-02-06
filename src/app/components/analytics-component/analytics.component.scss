@@ -1,27 +1,80 @@
 .analytics-container {
-    .analytics-header {
-        .analytics-title {
-            background: linear-gradient(45deg, #0d6efd, #6610f2);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            -webkit-text-fill-color: transparent;
-        }
+  .analytics-header {
+    .analytics-title {
+      background: linear-gradient(45deg, #0d6efd, #6610f2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
     }
+  }
 
-    .ls-1 {
-        letter-spacing: 1px;
-    }
+  .analytics-subtitle {
+    text-align: center;
+    margin-bottom: 24px;
 
-    .min-vh-50 {
-        min-height: 50vh;
-    }
+    background: linear-gradient(45deg, #0d6efd, #6610f2);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 
-    .activity-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+  .ls-1 {
+    letter-spacing: 1px;
+  }
+
+  .min-vh-50 {
+    min-height: 50vh;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sticky-top {
+    top: 10px;
+    z-index: 1;
+  }
+
+  .sub-nav-container {
+    background-color: #0b1120bc;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0 auto;
+    max-width: fit-content;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .btn-glass {
+    border: 1px solid;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover {
+      transform: translateY(-2px);
+      color: #3b82f6;
     }
+  }
+
+  .characters-recent-activity {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .card {
+      width: 100%;
+
+      @media screen and (min-width: 1024px) {
+        width: 83.33333333%
+      }
+    }
+  }
 }

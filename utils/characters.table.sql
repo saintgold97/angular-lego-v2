@@ -1,19 +1,19 @@
-create table
-    characters (
-        id uuid default gen_random_uuid () primary key,
-        name text not null,
-        lastname text not null,
-        email text not null unique,
-        phone text,
-        picture text,
-        gender text,
-        city text,
-        created_at timestamp
-        with
-            time zone default now ()
-    );
+create table characters (
+    id uuid default gen_random_uuid() primary key,
+    name text not null,
+    lastname text not null,
+    email text not null unique,
+    phone text,
+    picture text,
+    gender text,
+    created_at timestamptz default now(),
+    
+    -- Foreign Keys
+    city_id uuid references cities(id),
+    project_id uuid references projects(id),
+    created_by uuid references profiles(id)
+);
 
--- Inserimento dei personaggi nel database
 insert into
     characters (
         name,

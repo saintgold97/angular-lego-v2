@@ -1,10 +1,11 @@
-<div class="card glass p-4 shadow-sm">
+<div class="form-activity-card">
+  <div class="card glass p-4 shadow-sm">
     <h3 class="h5 mb-4"><i class="bi bi-plus-circle me-2"></i>Add New Activity</h3>
 
     <form [formGroup]="activitiesForm" (ngSubmit)="onActivitySubmit()">
       <div class="mb-3">
         <label class="form-label">Project</label>
-        <select class="form-select border-0 bg-light" formControlName="project_id">
+        <select class="form-select" formControlName="project_id">
           <option value="">Select Project...</option>
           @for (project of projects$ | async; track project.id) {
           <option [value]="project.id">{{ project.name }}</option>
@@ -15,7 +16,7 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label">Type</label>
-          <select class="form-select border-0 bg-light" formControlName="activity_type">
+          <select class="form-select" formControlName="activity_type">
             @for (type of activityTypes; track type) {
             <option [value]="type">{{ type | titlecase }}</option>
             }
@@ -23,7 +24,7 @@
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Priority</label>
-          <select class="form-select border-0 bg-light" formControlName="priority">
+          <select class="form-select" formControlName="priority">
             @for (priority of priorities; track priority) {
             <option [value]="priority">{{ priority | titlecase }}</option>
             }
@@ -34,17 +35,13 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label">Date</label>
-          <input
-            type="date"
-            class="form-control border-0 bg-light"
-            formControlName="activity_date"
-          />
+          <input type="date" class="form-control" formControlName="activity_date" />
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Working Hours</label>
           <input
             type="number"
-            class="form-control border-0 bg-light"
+            class="form-control"
             formControlName="working_hours"
             min="0"
             step="0.5"
@@ -56,7 +53,7 @@
       <div class="mb-4">
         <label class="form-label">Notes</label>
         <textarea
-          class="form-control border-0 bg-light"
+          class="form-control"
           rows="3"
           formControlName="notes"
           placeholder="What happened?"
@@ -79,3 +76,4 @@
     <div class="alert alert-danger mt-3 border-0">{{ errorMessage }}</div>
     }
   </div>
+</div>

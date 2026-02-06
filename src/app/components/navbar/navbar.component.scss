@@ -5,14 +5,25 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.4s ease-in-out;
+    transition:
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+    will-change: transform;
     transform: translateY(0);
 
     &.navbar-fixed {
         position: fixed;
         background-color: rgba(15, 23, 42, 0.95);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        animation: slideDown 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    &.navbar-hidden {
+        transform: translateY(-100%);
+    }
+
+    .navbar-brand {
+        z-index: 11;
     }
 
     .navbar-toggler {
@@ -20,9 +31,31 @@
         background: none;
         color: rgba(255, 255, 255, 0.7);
         font-size: 1.5rem;
+        z-index: 11;
 
         &:focus {
             box-shadow: none;
+        }
+    }
+
+    .menu {
+        width: 100%;
+
+        @media screen and (max-width: 992px) {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #0b1120;
+            padding: 80px 20px 20px;
+            z-index: 10;
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        &.open {
+            @media screen and (max-width: 992px) {
+                transform: translateX(0);
+            }
         }
     }
 
@@ -41,21 +74,34 @@
         }
 
         .nav-user {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding-top: 24px;
+
             @media screen and (min-width: 992px) {
-                display: flex;
-                align-items: center;
-                gap: 8px;
+                padding-top: 0;
             }
+        }
+    }
+
+    .nav-link {
+        transition: color 0.25s ease, transform 0.25s ease;
+
+        &:hover {
+            transform: translateY(-1px);
         }
     }
 
     .nav-link {
         color: rgba(255, 255, 255, 0.7);
         font-weight: 500;
-        transition: all 0.3s ease;
+        transition: color 0.25s ease, transform 0.25s ease;
 
         &:hover {
             color: #3b82f6;
+            transform: translateY(-1px);
         }
 
         .profile-img {
@@ -70,6 +116,23 @@
             &:hover {
                 transform: scale(1.1);
             }
+        }
+    }
+
+    .nav-link.active {
+        display: inline-block;
+        color: #3b82f6;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #3b82f6;
+            border-radius: 2px;
         }
     }
 

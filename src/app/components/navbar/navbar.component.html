@@ -1,43 +1,59 @@
-<nav class="navbar navbar-expand-lg" [class.navbar-fixed]="isFixed">
+<nav
+  class="navbar navbar-expand-lg"
+  role="navigation"
+  [class.navbar-fixed]="isFixed"
+  [class.navbar-hidden]="isHidden"
+>
   <div class="container-fluid">
-    <a class="navbar-brand" [routerLink]="['/home']"
-      ><img
-        style="width: 60px; height: 60px"
-        [src]="imgLegoLogo"
-        alt="Lego Logo"
+    <a class="navbar-brand" [routerLink]="['/home']" (click)="closeMenu()"
+      ><img width="60" height="60" [src]="imgLegoLogo" alt="Lego Logo"
     /></a>
     <button
       class="navbar-toggler"
       type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup"
       [aria-expanded]="isMenuOpen"
       aria-label="Toggle navigation"
       (click)="toggleMenu()"
     >
-    <i class="bi" [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-filter-right'" style="color: white; font-size: 1.8rem"></i>
+      <i
+        class="bi"
+        [ngClass]="isMenuOpen ? 'bi-x-lg' : 'bi-filter-right'"
+        style="color: white; font-size: 1.8rem"
+      ></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="menu" [class.open]="isMenuOpen">
       <div class="navbar-nav">
         <div class="nav-list-links">
-          <a class="nav-link active" aria-current="page"[routerLink]="['/home']">Home</a>
-          <a class="nav-link" [routerLink]="['/characters']">Characters</a>
-          <a class="nav-link" [routerLink]="['/projects']">Projects</a>
-          <a class="nav-link" [routerLink]="['/activities']">Activities</a>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active" (click)="closeMenu()"
+            >Home</a
+          >
+          <a
+            class="nav-link"
+            routerLink="/characters"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+            >Characters</a
+          >
+          <a class="nav-link" routerLink="/projects" routerLinkActive="active" (click)="closeMenu()"
+            >Projects</a
+          >
+          <a
+            class="nav-link"
+            routerLink="/activities"
+            routerLinkActive="active"
+            (click)="closeMenu()"
+            >Activities</a
+          >
         </div>
         <div class="nav-user">
           @if (userData | async; as data) {
-              <a  class="nav-link" [routerLink]="['/dashboard']">
-                <img
-                  [src]="data.avatar_url"
-                  class="profile-img"
-                />
-              </a>
+          <a class="nav-link" [routerLink]="['/dashboard']" (click)="closeMenu()">
+            <img [src]="data.avatar_url" class="profile-img" />
+          </a>
           } @else {
-              <div class="spinner-border text-warning" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
+          <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
           }
           <button class="btn btn-danger" (click)="signOutHandler()">
             <i class="bi bi-box-arrow-right btnSignOut"></i>Logout

@@ -6,7 +6,7 @@ import { ModalComponent } from '../../modal-component/modal.component';
 import { RouterLink } from '@angular/router';
 import { SingleCharacterComponent } from '../single-character/single-character.component';
 import { SupabaseService } from '../../../supabase/supabase.service';
-import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { HeroSectionComponent } from '../../hero-section/hero-section.component';
 import { userRoleEnum } from '../../../models/profiles.model';
 import { GatewaySectionComponent } from "../../gateway-section/gateway-section.component";
@@ -31,14 +31,22 @@ export class CharactersComponent implements OnInit {
   userRole$: Observable<userRoleEnum>;
   readonly roles = userRoleEnum;
   private refreshCharacters$ = new BehaviorSubject<void>(undefined);
+  private filters$ = new BehaviorSubject<{ name?: string; gender?: string }>({});
   characters$: Observable<LegoCharacter[]>;
 
   constructor(private supabase: SupabaseService) {
     this.userRole$ = this.supabase.getProfileRole();
-    
-    this.characters$ = this.refreshCharacters$.pipe(
-      switchMap(() => this.supabase.getCharacters()),
-      shareReplay(1)
+
+    this.characters$ = combineLatest([
+      this.refreshCharacters$,
+      this.filters$
+    ]).pipe(
+      switchMap(([_, filters]) => this.supabase.getCharacters(filters)),
+      shareReplay(1),
+      catchError(err => {
+        console.error('Error loading characters:', err);
+        return of([]);
+      })
     );
   }
 
@@ -46,18 +54,11 @@ export class CharactersComponent implements OnInit {
     this.loadCharacters();
   }
 
-
   loadCharacters() {
     const filter: { name?: string; gender?: string } = {};
-    if (this.selectedGender) filter.gender = this.selectedGender;
+    if (this.selectedGender && this.selectedGender !== 'all') filter.gender = this.selectedGender;
     if (this.searchTerm) filter.name = this.searchTerm;
-
-    this.characters$ = this.supabase.getCharacters(filter).pipe(
-      catchError(err => {
-        console.error('Error loading characters:', err);
-        return of([]);
-      })
-    );
+    this.filters$.next(filter);
   }
 
   searchCharactersByGender() {
