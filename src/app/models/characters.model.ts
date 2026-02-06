@@ -11,7 +11,7 @@ export interface LegoCharacter {
   city_id: string;
   city: City;
   project_id: string;
-  project: Project;
+  project?: Project;
   created_by: string;
   creator: UserProfile;
   created_at?: Date

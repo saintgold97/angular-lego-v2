@@ -45,10 +45,12 @@ export class DetailCharacterComponent implements OnInit {
       tap(character => {
         if (character) {
           this.currentCharacter = character;
-          this.selectedCharacter = character;
+          this.selectedCharacter = { ...character };
           this.checkIfFavorite(character);
         } else {
-          this.router.navigate(['/characters']);
+          if (this.route.snapshot.paramMap.get('id')) {
+            this.router.navigate(['/characters']);
+         }
         }
       })
     );
