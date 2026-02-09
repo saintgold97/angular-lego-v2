@@ -1,9 +1,25 @@
+<header class="admin-activities-header animate__fadeIn">
+  <h2 class="admin-activities-title display-6 fw-bold mb-2"><i class="bi bi-people-fill me-2"></i>Users Management</h2>
+  <div class="export-container">
+    <app-filter
+      [hideUserFilter]="true"
+      [hideProjectFilter]="true"
+      [hideDateFilter]="true"
+      (filterChanged)="updateFilters($event)"
+    />
+    <app-export-data
+      [dataCount]="(allProfiles$ | async)?.length || 0"
+      [isExporting]="loadingExport"
+      (onConfirm)="handleExport($event)"
+    />
+  </div>
+</header>
+
 <section class="admin-section animate__fadeIn">
   <div class="row justify-content-center">
     <div class="col-lg-10">
       <div class="card admin-card glass p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="m-0"><i class="bi bi-people-fill me-2"></i>Users Management</h4>
           <span class="badge bg-dark">Admin Panel</span>
         </div>
 

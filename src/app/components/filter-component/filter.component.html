@@ -1,6 +1,6 @@
 <div class="filter-container">
   <div class="filter-header">
-    <span class="filter-label"> <i class="bi bi-filter-left"></i> Filter Activities </span>
+    <span class="filter-label"> <i class="bi bi-filter-left"></i>Filter</span>
   </div>
 
   <div class="filter-body">
@@ -14,8 +14,7 @@
           }
         </select>
       </div>
-      }
-
+      } @if (!hideProjectFilter){
       <div class="col-6 col-md-4">
         <select
           id="project-select"
@@ -28,7 +27,7 @@
           }
         </select>
       </div>
-
+      } @if(!hideDateFilter){
       <div class="col-6 col-md-4">
         <div class="date-input-wrapper">
           <input
@@ -39,6 +38,20 @@
           />
         </div>
       </div>
+      } @if(!hideRolesFilter) {
+      <div class="col-6 col-lg-4">
+        <select
+          id="roles-select"
+          class="form-select custom-select"
+          (change)="onRolesChange($event)"
+        >
+          <option value="">All Roles</option>
+          @for (role of availableRoles$ | async; track role) {
+          <option [value]="role">{{ role }}</option>
+          }
+        </select>
+      </div>
+      }
 
       <div class="col-3 col-md-2">
         <button

@@ -1,32 +1,31 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { UserProfile, userRoleEnum } from "../../models/profiles.model";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable, switchMap, take } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { SupabaseService } from "../../supabase/supabase.service";
+import { ExportDataComponent } from "../export-data-component/export-data.component";
+import { FilterComponent } from "../filter-component/filter.component";
+import { ExportService } from "../../services/export.service";
 
 @Component({
     selector: "app-admin-panel",
     templateUrl: "./admin-panel.component.html",
     styleUrls: ["./admin-panel.component.scss"],
-    imports: [CommonModule]
+    imports: [CommonModule, ExportDataComponent, FilterComponent]
 })
-export class AdminPanelComponent implements OnInit {
-    allProfiles$: Observable<UserProfile[]> | null = null;
+export class AdminPanelComponent {
+    allProfiles$: Observable<UserProfile[]>;
     userRole$: Observable<userRoleEnum>;
     defaultAvatar = 'img/default-avatar.webp';
     readonly roles = userRoleEnum;
+    private filters$ = new BehaviorSubject<{role: string }>({ role: '' });
+    loadingExport: boolean = false;
 
-    constructor(private supabase: SupabaseService) {
+    constructor(private supabase: SupabaseService, private exportService: ExportService) {
         this.userRole$ = this.supabase.getProfileRole();
-    }
-
-    ngOnInit() {
-        // Admin
-        this.userRole$.subscribe(role => {
-            if (role === this.roles.ADMIN) {
-                this.allProfiles$ = this.supabase.getAllProfiles();
-            }
-        });
+        this.allProfiles$ = this.filters$.pipe(
+            switchMap(f => this.supabase.getAllProfiles(f.role))
+        );
     }
 
     async changeUserRole(userId: string, event: any) {
@@ -41,5 +40,43 @@ export class AdminPanelComponent implements OnInit {
         } else {
             alert("Role updated successfully.");
         }
+    }
+
+    updateFilters(newFilters: any) {
+        this.filters$.next({
+            role: newFilters.role
+        });
+    }
+
+    handleExport(format: 'xlsx' | 'pdf') {
+       this.loadingExport = true;
+       const currentFilters = this.filters$.value;
+
+       this.allProfiles$.pipe(take(1)).subscribe({
+           next: (data) => {
+               const projectSuffix = currentFilters.role ? `_Role_${currentFilters.role}` : '';
+               const fileName = `Users${projectSuffix}_${new Date().toISOString().split('T')[0]}`;
+
+               if(format === 'xlsx') {
+                   const mappedData = data.map((profile: UserProfile) => ({
+                       'Email': profile.email,
+                       'Display Name': profile.display_name,
+                       'Role': profile.role,
+                       
+                   }));
+                   this.exportService.exportAsExcelFile(mappedData, fileName);
+               } else {
+                   const columns = ['Email', 'Display Name', 'Role'];
+                   const rows = data.map((profile: UserProfile) => [
+                       profile.email,
+                       profile.display_name,
+                       profile.role,
+                   ]);
+                   const pdfTitle = currentFilters.role ? `Users Report: ${currentFilters.role}` : 'Users Report';
+                   this.exportService.exportAsPdfFile(columns, rows, fileName, pdfTitle);
+               }
+               this.loadingExport = false;
+            },
+       });
     }
 }

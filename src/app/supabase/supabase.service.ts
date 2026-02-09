@@ -54,17 +54,16 @@ export class SupabaseService {
 
   // ================= PROFILES =================
 
-  getAllProfiles(): Observable<UserProfile[]> {
-    return from(
-      this.supabase
-        .from('profiles')
-        .select('*')
-        .order('email', { ascending: true })
-    ).pipe(
-      map(res => {
-        if (res.error) throw res.error;
-        return res.data || [];
-      })
+  getAllProfiles(roleFilter?: string): Observable<UserProfile[]> {
+    let query = this.supabase.from('profiles').select('*').order('email', { ascending: true });
+
+    if (roleFilter) {
+      query = query.eq('role', roleFilter);
+    }
+
+    return from(query).pipe(
+      map(res => res.data || []),
+      catchError(() => of([]))
     );
   }
 
@@ -655,6 +654,6 @@ export class SupabaseService {
       project_name: (log.projects as any)?.name || 'Unknown Project',
       profile_email: (log.profiles as any)?.email || 'Unknown Email',
       date: log.activity_date,
-  }));
+    }));
   }
 }

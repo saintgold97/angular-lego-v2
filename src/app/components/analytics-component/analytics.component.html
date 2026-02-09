@@ -12,13 +12,13 @@
   <div id="sub-nav" class="sticky-top py-3 mb-4 sub-nav-container">
     <div class="d-flex justify-content-center gap-3">
       <button
-        (click)="scrollTo('character-analytics')"
+        (click)="scrollTo('character-analytics-title')"
         class="btn btn-glass btn-sm px-4 rounded-pill"
       >
         <i class="bi bi-people-fill me-2"></i>Characters
       </button>
       <button
-        (click)="scrollTo('timesheet-analytics')"
+        (click)="scrollTo('timesheet-analytics-title')"
         class="btn btn-glass btn-sm px-4 rounded-pill"
       >
         <i class="bi bi-clock-history me-2"></i>Timesheet
@@ -26,10 +26,16 @@
     </div>
   </div>
 
-  <section id="character-analytics" class="analytics-character-section">
+  <div id="character-analytics-title" class="analytics-section-title my-4">
     <h3 class="analytics-subtitle">
       <i class="bi bi-people-fill me-2 text-warning"></i>Characters
     </h3>
+    <button class="btn btn-sm btn-primary" (click)="exportCharactersAnalytics()">
+      <i class="bi bi-file-earmark-pdf me-2"></i>Export Characters Report
+    </button>
+  </div>
+
+  <section id="character-analytics" class="analytics-character-section">
     @if (stats$ | async; as stats) {
     <div class="row g-4 mb-4 justify-content-center">
       <div class="col-md-10">
@@ -154,8 +160,14 @@
     </div>
   </section>
 
-  <section id="timesheet-analytics" class="timesheet-section my-5">
+  <div id="timesheet-analytics-title" class="analytics-section-title my-4">
     <h3 class="analytics-subtitle"><i class="bi bi-clock-fill me-2 text-warning"></i>Timesheet</h3>
+    <button class="btn btn-sm btn-primary" (click)="exportTimesheetAnalytics()">
+      <i class="bi bi-file-earmark-pdf me-2"></i>Export Timesheet Report
+    </button>
+  </div>
+
+  <section id="timesheet-analytics" class="timesheet-section">
     <div class="row g-4 mb-5 justify-content-center">
       <div class="col-md-7">
         <div class="card glass p-4 h-100 shadow-sm">

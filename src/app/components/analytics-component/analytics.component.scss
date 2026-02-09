@@ -9,15 +9,34 @@
     }
   }
 
-  .analytics-subtitle {
-    text-align: center;
+  .analytics-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 24px;
 
-    background: linear-gradient(45deg, #0d6efd, #6610f2);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    @media screen and (min-width: 1024px) {
+      display: block;
+      position: relative;
+    }
+
+    .analytics-subtitle {
+      text-align: center;
+      background: linear-gradient(45deg, #0d6efd, #6610f2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0;
+    }
+
+    .btn-primary {
+      @media screen and (min-width: 1024px) {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
   }
 
   .ls-1 {

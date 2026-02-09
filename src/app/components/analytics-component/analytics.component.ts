@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 import { GraphComponent } from "../graph-component/graph.component";
 import { formatBusinessHeatmap, getColor, getMonthName } from "../../utils/analytics-utils";
 import { scrollTo } from "../../utils/scroll-utils";
+import { ExportService } from "../../services/export.service";
 
 interface DateFilter {
     month: number;
@@ -82,7 +83,7 @@ export class AnalyticsComponent implements AfterViewInit {
         }
     };
 
-    constructor(private supabase: SupabaseService) {
+    constructor(private supabase: SupabaseService, private exportService: ExportService) {
         this.loadStatistics();
         this.loadTimeAnalytics();
     }
@@ -232,7 +233,7 @@ export class AnalyticsComponent implements AfterViewInit {
 
     private loadMonthlyHeatmap(timeLogs$: Observable<any[]>) {
         this.monthlyActivityHeatmap$ = combineLatest([
-            timeLogs$, 
+            timeLogs$,
             this.filterSubject$,
             this.selectedUser$
         ]).pipe(
@@ -262,5 +263,21 @@ export class AnalyticsComponent implements AfterViewInit {
         }
 
         this.filterSubject$.next({ month: newMonth, year: newYear });
+    }
+
+    exportCharactersAnalytics() {
+        this.exportService.exportAnalyticsAsPdf(
+            'character-analytics', 
+            `characters-analytics.${new Date().toISOString().split('T')[0]}`, 
+            'Characters Analytics'
+        );
+    }
+
+    exportTimesheetAnalytics() {
+        this.exportService.exportAnalyticsAsPdf(
+            'timesheet-analytics', 
+            `timesheet-analytics.${new Date().toISOString().split('T')[0]}`, 
+            'Timesheet Analytics'
+        );
     }
 }

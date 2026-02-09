@@ -1,11 +1,34 @@
-.glass {
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 1.25rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.admin-activities-header {
+    text-align: center;
 
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    .admin-activities-title {
+        background: linear-gradient(45deg, #0d6efd, #6610f2);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .export-container {
+        margin-bottom: 32px;
+        padding: 0 16px;
+
+        @media screen and (min-width: 1280px) {
+            padding: 0 48px;
+        }
+    }
+}
+
+.admin-section {
+    .glass {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
     }
 }
