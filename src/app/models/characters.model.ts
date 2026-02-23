@@ -8,8 +8,7 @@ export interface LegoCharacter {
   phone: string;
   picture: string;
   gender: Gender;
-  city_id: string;
-  city: City;
+  city_name: City;
   project_id: string;
   project?: Project;
   created_by: string;
@@ -18,10 +17,9 @@ export interface LegoCharacter {
 }
 
 export interface City {
-  id: string;
-  name: string;
-  country: string;
-}
+  nome: string;
+  provincia: { sigla: string }
+};
 
 export interface Project {
   id: string;

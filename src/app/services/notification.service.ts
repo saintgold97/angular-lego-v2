@@ -23,8 +23,6 @@ export class NotificationService {
   show(message: string, type: ToastType = ToastType.SUCCESS) {
     this.clearTimeout();
     this.toastSubject.next({ message, type });
-    console.log("Toast message:", message);
-    
     
     if (type !== ToastType.CONFIRM) {
       this.timeoutId = setTimeout(() => this.close(), 5000);
