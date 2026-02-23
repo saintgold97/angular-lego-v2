@@ -5,11 +5,13 @@ import { Activity, ActivityPriority, ActivityType } from '../../../models/activi
 import { Observable } from 'rxjs';
 import { Project } from '../../../models/characters.model';
 import { SupabaseService } from '../../../supabase/supabase.service';
+import { NotificationService, ToastType } from '../../../services/notification.service';
+import { ToastComponent } from "../../toast-component/toast.component";
 
 @Component({
   selector: 'app-edit-activity',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ToastComponent],
   templateUrl: './edit-activity.component.html',
   styleUrls: ['./edit-activity.component.scss']
 })
@@ -26,7 +28,7 @@ export class EditActivityComponent implements OnChanges {
   readonly activityTypes = Object.values(ActivityType);
   readonly priorities = Object.values(ActivityPriority);
 
-  constructor(private fb: FormBuilder, private supabase: SupabaseService) {
+  constructor(private fb: FormBuilder, private supabase: SupabaseService, private notify: NotificationService) {
     this.projects$ = this.supabase.getProjects();
     this.editForm = this.fb.group({
       project_id: ['', Validators.required],
@@ -51,13 +53,16 @@ export class EditActivityComponent implements OnChanges {
     this.supabase.updateActivity(this.activity.id, this.editForm.value).subscribe({
       next: () => {
         this.uploading = false;
+        this.notify.show("Activity updated successfully", ToastType.SUCCESS);
+        console.log("Activity updated successfully");
+        
         this.updated.emit();
         this.close();
       },
       error: (err) => {
         console.error(err);
         this.uploading = false;
-        alert("Error updating activity");
+        this.notify.show("Error updating activity", ToastType.ERROR);
       }
     });
   }

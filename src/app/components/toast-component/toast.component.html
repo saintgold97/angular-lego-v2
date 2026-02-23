@@ -1,0 +1,50 @@
+@if(toast$ | async; as toast) {
+<div
+  class="toast-container position-fixed"
+  [ngClass]="{
+    'bottom-0 end-0 p-3': toast.type !== ToastType.CONFIRM,
+    'top-0 start-50 translate-middle-x mt-4': toast.type === ToastType.CONFIRM
+  }"
+  style="z-index: 1500; transition: all 0.3s ease-in-out"
+>
+  <div
+    class="toast show align-items-center text-white shadow"
+    [ngClass]="{
+      'bg-success': toast.type === ToastType.SUCCESS,
+      'bg-danger': toast.type === ToastType.ERROR,
+      'bg-dark text-white': toast.type === ToastType.INFO,
+      'bg-white toast-confirm': toast.type === ToastType.CONFIRM
+    }"
+    role="alert"
+  >
+    <div class="p-3">
+      <div class="d-flex align-items-start">
+        <div class="toast-body p-0 flex-grow-1" [class.text-dark]="toast.type === 'confirm'">
+          <strong>{{ toast.type === ToastType.CONFIRM ? 'Confirm Request' : '' }}</strong>
+          <p class="m-0">{{ toast.message }}</p>
+        </div>
+        @if (toast.type !== ToastType.CONFIRM) {
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="close(false, toast)"
+        ></button>
+        }
+      </div>
+
+      @if (toast.type === ToastType.CONFIRM) {
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <button class="btn btn-sm btn-outline-secondary" (click)="close(false, toast)">
+          Cancel
+        </button>
+        <button class="btn btn-sm btn-primary" (click)="close(true, toast)">Confirm</button>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+@if (toast.type === ToastType.CONFIRM) {
+  <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-25" style="z-index: 1400;"></div>
+}
+}

@@ -5,16 +5,18 @@ import { UserProfile, userRoleEnum } from "../../models/profiles.model";
 import { SupabaseService } from "../../supabase/supabase.service";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../utils/authValidators";
+import { NotificationService, ToastType } from "../../services/notification.service";
+import { ToastComponent } from "../toast-component/toast.component";
 
 @Component({
     selector: "app-personal-profile",
     templateUrl: "./personal-profile.component.html",
     styleUrls: ["./personal-profile.component.scss"],
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, ToastComponent],
 })
 export class PersonalProfileComponent implements OnInit {
     private refreshProfile$ = new BehaviorSubject<void>(undefined);
-    profileData$: Observable<UserProfile | null>;;
+    profileData$: Observable<UserProfile | null>;
     userRole$: Observable<userRoleEnum>;
 
     readonly roles = userRoleEnum;
@@ -22,7 +24,7 @@ export class PersonalProfileComponent implements OnInit {
     loading = false;
     editProfileForm!: FormGroup;
 
-    constructor(private supabase: SupabaseService, private fb: FormBuilder) {
+    constructor(private supabase: SupabaseService, private fb: FormBuilder, private notify: NotificationService) {
         this.initForm();
         this.userRole$ = this.supabase.getProfileRole();
 
@@ -56,12 +58,12 @@ export class PersonalProfileComponent implements OnInit {
 
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
-            alert("Please upload a valid image (JPEG, PNG, or WebP).");
+            this.notify.show("Please upload a valid image (JPEG, PNG, or WebP).", ToastType.ERROR);
             return;
         }
 
         if (file.size > 15 * 1024 * 1024) {
-            alert("Image size must be less than 15MB.");
+            this.notify.show("Please upload an image smaller than 15MB.", ToastType.ERROR);
             return;
         }
 
@@ -73,7 +75,7 @@ export class PersonalProfileComponent implements OnInit {
                 this.refreshProfile$.next();
             }
         } catch (error) {
-            alert("Error uploading image. Check your connection or permissions.");
+            this.notify.show("Error uploading image. Check your connection or permissions.", ToastType.ERROR);
         } finally {
             this.loading = false;
         }
@@ -115,9 +117,9 @@ export class PersonalProfileComponent implements OnInit {
             });
 
             if (result.error) {
-                alert("Verification failed: " + result.error);
+                this.notify.show(result.error, ToastType.ERROR);
             } else {
-                alert("Profile updated successfully!");
+                this.notify.show("Profile updated successfully!", ToastType.SUCCESS);
                 this.editProfileForm.markAsPristine();
                 this.refreshProfile$.next();
                 this.editProfileForm.patchValue({
@@ -127,7 +129,8 @@ export class PersonalProfileComponent implements OnInit {
                 });
             }
         } catch (err: any) {
-            alert("Error: " + err.message);
+            console.error('Error updating profile:', err);
+            this.notify.show("Error updating profile. Check your connection or permissions.", ToastType.ERROR);
         } finally {
             this.loading = false;
         }

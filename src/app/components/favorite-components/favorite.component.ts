@@ -4,12 +4,14 @@ import { FavoritesService } from '../../services/favorites.service';
 import { CommonModule } from '@angular/common';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { SingleCharacterComponent } from "../chars-components/single-character/single-character.component";
+import { NotificationService, ToastType } from '../../services/notification.service';
+import { ToastComponent } from "../toast-component/toast.component";
 
 @Component({
   selector: 'app-favorite-components',
   templateUrl: './favorite.component.html',
   styleUrls: ['./favorite.component.scss'],
-  imports: [CommonModule, SingleCharacterComponent],
+  imports: [CommonModule, SingleCharacterComponent, ToastComponent],
 })
 export class FavoriteComponents implements OnInit {
   favorites: Observable<LegoCharacter[]> | undefined;
@@ -17,7 +19,7 @@ export class FavoriteComponents implements OnInit {
   private refreshFavorites = new BehaviorSubject<void>(undefined);
   imgEmptyFavorites = 'img/empty-favorites.webp';
 
-  constructor(private favoritesService: FavoritesService) { }
+  constructor(private favoritesService: FavoritesService, private notify: NotificationService) { }
 
   ngOnInit() {
     this.favorites = this.refreshFavorites.pipe(
@@ -30,19 +32,17 @@ export class FavoriteComponents implements OnInit {
   }
 
   async toggleFavorite(character: LegoCharacter) {
-    const deletedConfirm = window.confirm(
-      `Are you sure you want to remove "${character.name} ${character.lastname}" from favorites?`
-    );
+    const deletedConfirm = await this.notify.confirm(`Are you sure you want to remove "${character.name} ${character.lastname}" from favorites?`);
 
     if (!deletedConfirm) return;
 
     try {
       await this.favoritesService.toggleFavorite(character);
-      alert(`${character.name} has been removed from your favorites.`);
+      this.notify.show(`${character.name} removed from favorites!`, ToastType.SUCCESS);
       this.refreshFavorites.next();
     } catch (error) {
       console.error("Error removing favorite:", error);
-      alert("An error occurred while removing the favorite.");
+      this.notify.show("Error removing favorite. Please try again.", ToastType.ERROR);
     }
   }
 }

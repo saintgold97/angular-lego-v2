@@ -8,12 +8,14 @@ import { Observable, tap, switchMap, of, map, BehaviorSubject, combineLatest } f
 import { ModalComponent } from "../../modal-component/modal.component";
 import { userRoleEnum } from "../../../models/profiles.model";
 import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.component";
+import { NotificationService, ToastType } from "../../../services/notification.service";
+import { ToastComponent } from "../../toast-component/toast.component";
 
 @Component({
   selector: 'app-detail-character',
   templateUrl: './detail-character.component.html',
   styleUrls: ['./detail-character.component.scss'],
-  imports: [CommonModule, ModalComponent, BreadcrumbComponent],
+  imports: [CommonModule, ModalComponent, BreadcrumbComponent, ToastComponent],
 })
 export class DetailCharacterComponent implements OnInit {
   character: Observable<LegoCharacter | null> = of(null);
@@ -28,7 +30,8 @@ export class DetailCharacterComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private supabase: SupabaseService,
-    private favoritesService: FavoritesService
+    private favoritesService: FavoritesService,
+    private notify: NotificationService
   ) {
     this.userRole$ = this.supabase.getProfileRole();
   }
@@ -50,7 +53,7 @@ export class DetailCharacterComponent implements OnInit {
         } else {
           if (this.route.snapshot.paramMap.get('id')) {
             this.router.navigate(['/characters']);
-         }
+          }
         }
       })
     );
@@ -70,39 +73,37 @@ export class DetailCharacterComponent implements OnInit {
 
 
       if (newState) {
-        alert(`${this.currentCharacter.name} has been added to favorites! ⭐`);
+        this.notify.show(`${this.currentCharacter.name} added to favorites!`, ToastType.SUCCESS);
       } else {
-        alert(`${this.currentCharacter.name} has been removed from favorites!`);
+        this.notify.show(`${this.currentCharacter.name} removed from favorites!`, ToastType.SUCCESS);
       }
     } catch (error) {
       console.error("Error updating favorites:", error);
-      alert("There was an error updating favorites. Please try again.");
+      this.notify.show("Error updating favorites. Please try again.", ToastType.ERROR);
     }
   }
 
-  deleteCharacter(): void {
+  async deleteCharacter(): Promise<void> {
     if (!this.currentCharacter) return;
 
-    const deletedConfirm = window.confirm(
-      `Are you sure you want to delete "${this.currentCharacter.name} ${this.currentCharacter.lastname}"?`
-    );
+    const deletedConfirm = await this.notify.confirm(`Are you sure you want to delete "${this.currentCharacter.name} ${this.currentCharacter.lastname}"?`);
 
     if (!deletedConfirm) return;
 
     this.supabase.deleteCharacter(this.currentCharacter.id || '').subscribe({
       next: () => {
         this.router.navigate(['/characters']);
-        alert('Character deleted successfully!');
+        this.notify.show('Character deleted successfully!', ToastType.SUCCESS);
       },
       error: (err) => {
         console.error('Error deleting character:', err);
-        alert('Error deleting character. Please try again.');
+        this.notify.show('Error deleting character. Please try again.', ToastType.ERROR);
       }
     });
   }
 
   onCharacterUpdated() {
-    alert('Character updated successfully!');
+    this.notify.show('Character updated successfully!', ToastType.SUCCESS);
     this.refreshTrigger$.next();
   }
 }

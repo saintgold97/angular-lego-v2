@@ -6,12 +6,14 @@ import { SupabaseService } from "../../supabase/supabase.service";
 import { ExportDataComponent } from "../export-data-component/export-data.component";
 import { FilterComponent } from "../filter-component/filter.component";
 import { ExportService } from "../../services/export.service";
+import { NotificationService, ToastType } from "../../services/notification.service";
+import { ToastComponent } from "../toast-component/toast.component";
 
 @Component({
     selector: "app-admin-panel",
     templateUrl: "./admin-panel.component.html",
     styleUrls: ["./admin-panel.component.scss"],
-    imports: [CommonModule, ExportDataComponent, FilterComponent]
+    imports: [CommonModule, ExportDataComponent, FilterComponent, ToastComponent]
 })
 export class AdminPanelComponent {
     allProfiles$: Observable<UserProfile[]>;
@@ -21,7 +23,7 @@ export class AdminPanelComponent {
     private filters$ = new BehaviorSubject<{role: string }>({ role: '' });
     loadingExport: boolean = false;
 
-    constructor(private supabase: SupabaseService, private exportService: ExportService) {
+    constructor(private supabase: SupabaseService, private exportService: ExportService, private notify: NotificationService) {
         this.userRole$ = this.supabase.getProfileRole();
         this.allProfiles$ = this.filters$.pipe(
             switchMap(f => this.supabase.getAllProfiles(f.role))
@@ -36,9 +38,9 @@ export class AdminPanelComponent {
             .eq('id', userId);
 
         if (error) {
-            alert("Error updating role: " + error.message);
+            this.notify.show(error.message, ToastType.ERROR);
         } else {
-            alert("Role updated successfully.");
+            this.notify.show("Role updated successfully.", ToastType.SUCCESS);
         }
     }
 

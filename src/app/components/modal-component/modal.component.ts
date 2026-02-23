@@ -3,12 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { City, LegoCharacter, Project } from '../../models/characters.model';
 import { ReactiveFormsModule } from '@angular/forms'
 import { SupabaseService } from '../../supabase/supabase.service';
+import { NotificationService, ToastType } from '../../services/notification.service';
+import { ToastComponent } from "../toast-component/toast.component";
 
 @Component({
     selector: 'app-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, ToastComponent],
 })
 export class ModalComponent implements OnInit, OnChanges {
     // Character Form
@@ -37,7 +39,7 @@ export class ModalComponent implements OnInit, OnChanges {
     allCharacters: LegoCharacter[] = [];
     @Input() currentMembersIds: string[] = [];
 
-    constructor(private fb: FormBuilder, private supabase: SupabaseService, private cdr: ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private supabase: SupabaseService, private cdr: ChangeDetectorRef, private notify: NotificationService) {
         this.initForm();
     }
 
@@ -108,12 +110,12 @@ export class ModalComponent implements OnInit, OnChanges {
 
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
-            alert("Please upload a valid image (JPEG, PNG, or WebP).");
+            this.notify.show("Please upload a valid image (JPEG, PNG, or WebP).", ToastType.ERROR);
             return;
         }
 
         if (file.size > 15 * 1024 * 1024) {
-            alert("Image size must be less than 15MB.");
+            this.notify.show("Image size should be less than 15MB.", ToastType.ERROR);
             return;
         }
 
@@ -148,6 +150,7 @@ export class ModalComponent implements OnInit, OnChanges {
                     next: () => {
                         this.characterUpdated.emit();
                         this.closeModalAction();
+                        this.notify.show("Character updated successfully", ToastType.SUCCESS);
                     },
                     error: (err) => console.error(err)
                 });
@@ -156,12 +159,14 @@ export class ModalComponent implements OnInit, OnChanges {
                     next: () => {
                         this.characterCreated.emit();
                         this.closeModalAction();
+                        this.notify.show("Character created successfully", ToastType.SUCCESS);
                     },
                     error: (err) => console.error(err)
                 });
             }
         } catch (error) {
-            alert(error);
+            console.error(error);
+            this.notify.show("An error occurred. Please try again.", ToastType.ERROR);
         } finally {
             this.isUploading = false;
         }
