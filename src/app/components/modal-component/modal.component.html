@@ -152,15 +152,41 @@
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" formControlName="email" required />
           </div>
-
-          <div class="mb-3">
+          
+          <div class="mb-3 position-relative">
             <label for="city" class="form-label">City</label>
-            <select class="form-select" formControlName="city_id" required>
-              <option value="" disabled>Select City</option>
-              @for (city of cities; track city.id) {
-              <option [value]="city.id">{{ city.name }} ({{ city.country }})</option>
-              }
-            </select>
+            <div class="input-group">
+              <span class="input-group-text bg-white">
+                @if(citiesService.loading()) {
+                  <div class="spinner-border spinner-border-sm text-primary"></div>
+                } @else {
+                  <i class="bi bi-geo-alt"></i>
+                }
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Type at least 2 chars..."
+                formControlName="city_name"
+                (focus)="showSuggestions.set(true)"
+                autocomplete="off"
+              />
+            </div>
+          
+            @if (showSuggestions() && citiesService.filteredCities().length > 0) {
+              <div class="list-group position-absolute w-100 shadow-lg mt-1" style="z-index: 2000; max-height: 250px; overflow-y: auto;">
+                @for (city of citiesService.filteredCities(); track city.nome) {
+                  <button
+                    type="button"
+                    class="list-group-item list-group-item-action d-flex justify-content-between"
+                    (click)="selectCity(city)"
+                  >
+                    {{ city.nome }}
+                    <span class="text-muted small">{{ city.provincia.sigla }}</span>
+                  </button>
+                }
+              </div>
+            }
           </div>
 
           <div class="mb-3">

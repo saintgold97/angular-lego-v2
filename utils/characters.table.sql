@@ -7,13 +7,14 @@ create table characters (
     picture text,
     gender text,
     created_at timestamptz default now(),
+    city_name text,
     
     -- Foreign Keys
-    city_id uuid references cities(id),
     project_id uuid references projects(id),
     created_by uuid references profiles(id)
 );
 
+-- Example Seed
 insert into
     characters (
         name,
@@ -22,7 +23,7 @@ insert into
         phone,
         picture,
         gender,
-        city
+        city_name
     )
 values
     (
@@ -32,7 +33,7 @@ values
         '(676)-466-5035',
         'http://api.randomuser.me/portraits/lego/2.jpg',
         'male',
-        'Roanoke'
+        'Torino (TO)'
     ),
     (
         'Martha',
@@ -41,7 +42,7 @@ values
         '(123)-456-7890',
         'http://api.randomuser.me/portraits/lego/3.jpg',
         'female',
-        'Springfield'
+        'Milano (MI)'
     ),
     (
         'Carlos',
@@ -50,7 +51,7 @@ values
         '(234)-567-8901',
         'http://api.randomuser.me/portraits/lego/4.jpg',
         'male',
-        'Austin'
+        'Centuripe (EN)'
     ),
     (
         'Emily',
@@ -59,7 +60,7 @@ values
         '(345)-678-9012',
         'http://api.randomuser.me/portraits/lego/5.jpg',
         'female',
-        'Chicago'
+        'Paternò (CT)'
     ),
     (
         'Oliver',
@@ -68,7 +69,7 @@ values
         '(456)-789-0123',
         'http://api.randomuser.me/portraits/lego/6.jpg',
         'male',
-        'Seattle'
+        'Roma (RM)'
     ),
     (
         'Sophia',
@@ -77,7 +78,7 @@ values
         '(567)-890-1234',
         'http://api.randomuser.me/portraits/lego/7.jpg',
         'female',
-        'Boston'
+        'Napoli (NA)'
     ),
     (
         'Liam',
@@ -86,7 +87,7 @@ values
         '(678)-901-2345',
         'http://api.randomuser.me/portraits/lego/8.jpg',
         'male',
-        'Denver'
+        'Bologna (BL)'
     ),
     (
         'Isabella',
@@ -95,7 +96,7 @@ values
         '(789)-012-3456',
         'http://api.randomuser.me/portraits/lego/9.jpg',
         'female',
-        'Miami'
+        'Milano (MI)'
     ),
     (
         'Noah',
@@ -104,7 +105,7 @@ values
         '(890)-123-4567',
         'http://api.randomuser.me/portraits/lego/10.jpg',
         'male',
-        'Phoenix'
+        'Roma (RM)'
     ),
     (
         'Ava',
@@ -113,5 +114,5 @@ values
         '(901)-234-5678',
         'http://api.randomuser.me/portraits/lego/11.jpg',
         'female',
-        'Atlanta'
+        'Napoli (NA)'
     );

@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { City, LegoCharacter, Project } from '../../models/characters.model';
 import { ReactiveFormsModule } from '@angular/forms'
 import { SupabaseService } from '../../supabase/supabase.service';
 import { NotificationService, ToastType } from '../../services/notification.service';
 import { ToastComponent } from "../toast-component/toast.component";
+import { CitiesService } from '../../services/cities.service';
 
 @Component({
     selector: 'app-modal',
@@ -23,7 +24,6 @@ export class ModalComponent implements OnInit, OnChanges {
 
     @ViewChild('closeModal') closeModal!: ElementRef;
 
-    cities: City[] = [];
     projects: Project[] = [];
     selectedFile: File | null = null;
     previewUrl: string | null = null;
@@ -39,8 +39,22 @@ export class ModalComponent implements OnInit, OnChanges {
     allCharacters: LegoCharacter[] = [];
     @Input() currentMembersIds: string[] = [];
 
-    constructor(private fb: FormBuilder, private supabase: SupabaseService, private cdr: ChangeDetectorRef, private notify: NotificationService) {
+    //Cities
+    cities: City[] = [];
+    showSuggestions = signal<boolean>(false);
+
+    constructor(
+        private fb: FormBuilder, 
+        private supabase: SupabaseService, 
+        private cdr: ChangeDetectorRef, 
+        private notify: NotificationService, 
+        public citiesService: CitiesService
+    ) {
         this.initForm();
+
+        this.legoCharacterForm.get('city_name')?.valueChanges.subscribe(val => {
+            this.citiesService.searchTerm.set(val || '');
+        });
     }
 
     ngOnInit(): void {
@@ -74,7 +88,7 @@ export class ModalComponent implements OnInit, OnChanges {
             lastname: ['', Validators.required],
             gender: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            city_id: ['', Validators.required],
+            city_name: ['', Validators.required],
             project_id: ['', Validators.required],
             phone: ['', Validators.required],
             picture: ['']
@@ -91,10 +105,7 @@ export class ModalComponent implements OnInit, OnChanges {
     }
 
     loadCities() {
-        this.supabase.getCities().subscribe({
-            next: (res) => this.cities = res,
-            error: (err) => console.error('Error loading cities:', err)
-        });
+        this.citiesService.allCities();
     }
 
     loadProjects() {
@@ -258,5 +269,12 @@ export class ModalComponent implements OnInit, OnChanges {
         this.successMessage = null;
         this.isUploading = false;
         this.cdr.detectChanges();
+    }
+
+    selectCity(city: City) {
+        const cityNameWithProv = `${city.nome} (${city.provincia.sigla})`;
+        this.legoCharacterForm.get('city_name')?.setValue(cityNameWithProv, { emitEvent: false });
+        this.showSuggestions.set(false);
+        this.citiesService.searchTerm.set('');
     }
 }

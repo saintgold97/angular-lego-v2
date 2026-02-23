@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js'
 import { environment } from '../environments/environments'
-import { City, GenderEnum, LegoCharacter, Project } from '../models/characters.model'
+import { GenderEnum, LegoCharacter, Project } from '../models/characters.model'
 import { BehaviorSubject, from, Observable, map, switchMap, of, shareReplay, catchError } from 'rxjs';
 import { UserProfile, userRoleEnum } from '../models/profiles.model';
 import { Activity } from '../models/activities.model';
@@ -12,7 +12,6 @@ export class SupabaseService {
   private userSubject = new BehaviorSubject<User | null>(null)
   user$ = this.userSubject.asObservable()
   private roleCache$: Observable<userRoleEnum> | null = null;
-  private citiesCache$: Observable<City[]> | null = null;
   private projectsCache$: Observable<Project[]> | null = null;
 
   constructor() {
@@ -38,7 +37,6 @@ export class SupabaseService {
 
   signOut() {
     this.roleCache$ = null;
-    this.citiesCache$ = null;
     this.projectsCache$ = null;
     return this.supabase.auth.signOut()
   }
@@ -202,11 +200,6 @@ export class SupabaseService {
           .from('characters')
           .select(`
           *,
-          city:cities!characters_city_id_fkey (
-          id,
-          name,
-          country
-          ),
           project:projects!characters_project_fkey (
           id,
           name,
@@ -249,7 +242,7 @@ export class SupabaseService {
       phone: character.phone,
       picture: character.picture,
       gender: character.gender,
-      city_id: character.city_id,
+      city_name: character.city_name,
       project_id: character.project_id,
       created_by: this.currentUserValue?.id ?? null
     };
@@ -270,11 +263,6 @@ export class SupabaseService {
       .from('characters')
       .select(`
         *,
-        city:cities!characters_city_id_fkey (
-          id,
-          name,
-          country
-        ),
         project:projects!characters_project_fkey (
           id,
           name,
@@ -388,20 +376,6 @@ export class SupabaseService {
     return !!data;
   }
 
-  // ================= CITIES =================
-  getCities(): Observable<City[]> {
-    if (!this.citiesCache$) {
-      this.citiesCache$ = from(this.supabase.from('cities').select('*').order('name')).pipe(
-        map(res => {
-          if (res.error) throw res.error;
-          return res.data as City[];
-        }),
-        shareReplay(1)
-      );
-    }
-    return this.citiesCache$;
-  }
-
   // ================= PROJECTS =================
   getProjects(): Observable<Project[]> {
     if (!this.projectsCache$) {
@@ -492,6 +466,7 @@ export class SupabaseService {
         let query = this.supabase
           .from('characters')
           .select(`
+            city_name,
             gender, 
             project:projects!characters_project_fkey (
               id, 
@@ -499,11 +474,6 @@ export class SupabaseService {
               description, 
               start_date, 
               end_date
-            ),
-            city:cities!characters_city_id_fkey (
-              id,
-              name,
-              country
             )
           `);
 
@@ -512,7 +482,7 @@ export class SupabaseService {
         }
 
         return from(query).pipe(
-          map(res => {
+          map((res: any) => {
             if (res.error) throw res.error;
 
             const genderStats = { labels: [GenderEnum.MALE, GenderEnum.FEMALE], data: [0, 0] };
@@ -525,8 +495,15 @@ export class SupabaseService {
               else if (char.gender === GenderEnum.FEMALE) genderStats.data[1]++;
 
               // City Stats
-              const cityName = char.city?.name || 'Unknown City';
-              cityMap[cityName] = (cityMap[cityName] || 0) + 1;
+              let label = 'Unknown City';
+
+              if (char.city_name) {
+                if (typeof char.city_name === 'string') {
+                  label = char.city_name;
+                }
+              }
+
+              cityMap[label] = (cityMap[label] || 0) + 1;
 
               // 3. Project Stats
               if (char.project) {
@@ -549,12 +526,23 @@ export class SupabaseService {
             });
             const projectsArray = Object.values(projectDetailedMap);
 
+            // City Stats
+            const sortedCities = Object.entries(cityMap)
+              .sort((a, b) => b[1] - a[1]);
+
+            const topCities = sortedCities.slice(0, 8);
+            const otherCount = sortedCities.slice(8).reduce((sum, current) => sum + current[1], 0);
+
+            if (otherCount > 0) {
+              topCities.push(['Others', otherCount]);
+            }
+
             return {
               total: res.data.length,
               gender: genderStats,
               cities: {
-                labels: Object.keys(cityMap),
-                data: Object.values(cityMap)
+                labels: topCities.map(c => c[0]),
+                data: topCities.map(c => c[1])
               },
               projects: {
                 detailed: projectsArray,

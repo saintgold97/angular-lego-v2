@@ -100,7 +100,6 @@ This will create:
 - `projects` and `characters` tables
 - `favorites` junction table
 - `activities` table
-- `city` table
 - `bucket-policy`
 
 ---

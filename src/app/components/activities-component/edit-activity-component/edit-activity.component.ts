@@ -54,7 +54,6 @@ export class EditActivityComponent implements OnChanges {
       next: () => {
         this.uploading = false;
         this.notify.show("Activity updated successfully", ToastType.SUCCESS);
-        console.log("Activity updated successfully");
         
         this.updated.emit();
         this.close();
