@@ -1,13 +1,13 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { BehaviorSubject, Observable, switchMap, take } from "rxjs";
-import { SupabaseService } from "../../supabase/supabase.service";
 import { ActivitiesTableComponent } from "./activities-table-component/activities-table.component";
 import { Activity } from "../../models/activities.model";
 import { ActivitiesListComponent } from "./activities-list-component/activities-list.component";
 import { FilterComponent } from "../filter-component/filter.component";
 import { ExportDataComponent } from "../export-data-component/export-data.component";
 import { ExportService } from "../../services/export.service";
+import { ActivitiesService } from "../../services/supabase/activities.service";
 
 @Component({
     selector: 'app-monitoring-activities',
@@ -25,12 +25,12 @@ export class MonitoringActivitiesComponent {
     });
 
     activities$: Observable<Activity[]> = this.filters$.pipe(
-        switchMap(f => this.supabase.getActivities(f.userId, f.projectId, f.date))
+        switchMap(f => this.activitiesService.getActivities(f.userId, f.projectId, f.date))
     );
     switchSection: boolean = false;
     loadingExport: boolean = false;
 
-    constructor(private supabase: SupabaseService, private exportService: ExportService) { }
+    constructor(private activitiesService: ActivitiesService, private exportService: ExportService) { }
 
     updateFilters(newFilters: any) {
         this.filters$.next(newFilters);

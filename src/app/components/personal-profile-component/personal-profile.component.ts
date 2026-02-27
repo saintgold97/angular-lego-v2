@@ -2,11 +2,12 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { BehaviorSubject, combineLatest, filter, from, Observable, of, shareReplay, switchMap, take } from "rxjs";
 import { UserProfile, userRoleEnum } from "../../models/profiles.model";
-import { SupabaseService } from "../../supabase/supabase.service";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../utils/authValidators";
 import { NotificationService, ToastType } from "../../services/notification.service";
 import { ToastComponent } from "../toast-component/toast.component";
+import { ProfileService } from "../../services/supabase/profile.service";
+import { SupabaseClientService } from "../../services/supabase/supabase.client";
 
 @Component({
     selector: "app-personal-profile",
@@ -24,17 +25,22 @@ export class PersonalProfileComponent implements OnInit {
     loading = false;
     editProfileForm!: FormGroup;
 
-    constructor(private supabase: SupabaseService, private fb: FormBuilder, private notify: NotificationService) {
+    constructor(
+        private supabaseClientService: SupabaseClientService, 
+        private profileService: ProfileService, 
+        private fb: FormBuilder, 
+        private notify: NotificationService
+    ) {
         this.initForm();
-        this.userRole$ = this.supabase.getProfileRole();
+        this.userRole$ = this.profileService.getProfileRole();
 
         this.profileData$ = combineLatest([
-            this.supabase.user$,
+            this.supabaseClientService.user$,
             this.refreshProfile$
         ]).pipe(
             switchMap(([user, _]) => {
                 if (!user) return of(null);
-                return from(this.supabase.getProfileById(user.id));
+                return from(this.profileService.getProfileById(user.id));
             }),
             shareReplay(1)
         );
@@ -70,7 +76,7 @@ export class PersonalProfileComponent implements OnInit {
         this.loading = true;
 
         try {
-            const url = await this.supabase.uploadAvatar(file);
+            const url = await this.profileService.uploadAvatar(file);
             if (url) {
                 this.refreshProfile$.next();
             }
@@ -110,7 +116,7 @@ export class PersonalProfileComponent implements OnInit {
         const formValue = this.editProfileForm.getRawValue();
 
         try {
-            const result = await this.supabase.updateProfile({
+            const result = await this.profileService.updateProfile({
                 displayName: formValue.displayName,
                 password: formValue.password,
                 currentPassword: formValue.currentPassword

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { SupabaseService } from "../../supabase/supabase.service";
 import { Project } from "../../models/characters.model";
 import { UserProfile, userRoleEnum } from "../../models/profiles.model";
 import { CommonModule } from "@angular/common";
+import { ProfileService } from "../../services/supabase/profile.service";
+import { ProjectsService } from "../../services/supabase/projects.service";
 
 @Component({
     selector: "app-filter",
@@ -22,11 +23,11 @@ export class FilterComponent implements OnInit {
     @Input() hideDateFilter: boolean = false;
     availableRoles$: Observable<string[]> = of(Object.values(userRoleEnum));
 
-    constructor(private supabase: SupabaseService) { }
+    constructor(private profileService: ProfileService, private projectsService: ProjectsService) { }
 
     ngOnInit() {
-        if (!this.hideUserFilter) this.allProfiles$ = this.supabase.getAllProfiles();
-        if(!this.hideProjectFilter) this.allProjects$ = this.supabase.getProjects();
+        if (!this.hideUserFilter) this.allProfiles$ = this.profileService.getAllProfiles();
+        if(!this.hideProjectFilter) this.allProjects$ = this.projectsService.getProjects();
         if(!this.hideRolesFilter) this.availableRoles$;
         this.notifyChange();
     }

@@ -5,7 +5,7 @@ import { LoginGuard } from './guards/login.guard';
 export const routes: Routes = [
   {
     path: "",
-    loadComponent: () => import('./supabase/auth/auth').then(m => m.AuthComponent),
+    loadComponent: () => import('./components/auth/auth').then(m => m.AuthComponent),
     canActivate: [LoginGuard]
   },
   {

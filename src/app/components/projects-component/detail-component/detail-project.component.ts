@@ -5,9 +5,11 @@ import { LegoCharacter, Project } from '../../../models/characters.model';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 import { ModalComponent } from '../../modal-component/modal.component';
 import { userRoleEnum } from '../../../models/profiles.model';
-import { SupabaseService } from '../../../supabase/supabase.service';
 import { SingleCharacterComponent } from "../../chars-components/single-character/single-character.component";
 import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.component";
+import { ProjectsService } from '../../../services/supabase/projects.service';
+import { ProfileService } from '../../../services/supabase/profile.service';
+import { CharactersService } from '../../../services/supabase/characters.service';
 
 @Component({
   selector: 'app-detail-project',
@@ -27,9 +29,11 @@ export class DetailProjectComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private supabase: SupabaseService,
+    private projectService: ProjectsService,
+    private profileService: ProfileService,
+    private characterService: CharactersService,
   ) {
-    this.userRole$ = this.supabase.getProfileRole();
+    this.userRole$ = this.profileService.getProfileRole();
   }
 
   ngOnInit() {
@@ -40,7 +44,7 @@ export class DetailProjectComponent implements OnInit {
       map(([params, _]) => params.get('id')),
       switchMap(id => {
         if (!id) return of(null);
-        return this.supabase.getProjectById(id);
+        return this.projectService.getProjectById(id);
       }),
       tap(project => {
         if (project) {
@@ -62,7 +66,7 @@ export class DetailProjectComponent implements OnInit {
     this.membersData$ = projectId$.pipe(
       switchMap(id => {
         if (!id) return of([]);
-        return this.supabase.getCharacters({ project_id: id });
+        return this.characterService.getCharacters({ project_id: id });
       })
     );
   }

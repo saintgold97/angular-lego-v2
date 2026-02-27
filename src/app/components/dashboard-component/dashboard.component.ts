@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { SupabaseService } from '../../supabase/supabase.service';
 import { DashboardSection, dashboardSectionEnum, userRoleEnum } from '../../models/profiles.model';
 import { Observable } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -10,6 +9,7 @@ import { AdminPanelComponent } from "../admin-panel-component/admin-panel.compon
 import { MonitoringActivitiesComponent } from "../monitoring-activities-component/monitoring-activities.component";
 import { AnalyticsComponent } from "../analytics-component/analytics.component";
 import { PersonalProfileComponent } from "../personal-profile-component/personal-profile.component";
+import { ProfileService } from '../../services/supabase/profile.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,8 +32,8 @@ export class DashboardComponent implements OnInit {
   activeSection: DashboardSection = dashboardSectionEnum.PERSONAL_INFO;
   readonly dashboardSectionEnum = dashboardSectionEnum;
 
-  constructor(private supabase: SupabaseService, private route: ActivatedRoute, private cd: ChangeDetectorRef) {
-    this.userRole$ = this.supabase.getProfileRole();
+  constructor(private profileService: ProfileService, private route: ActivatedRoute, private cd: ChangeDetectorRef) {
+    this.userRole$ = this.profileService.getProfileRole();
   }
 
   ngOnInit() {

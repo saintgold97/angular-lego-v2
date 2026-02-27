@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core'
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule
 } from '@angular/forms'
-import { SupabaseService } from '../supabase.service'
 import { Router } from '@angular/router'
 import { passwordMatchValidator } from '../../utils/authValidators'
+import { AuthService } from '../../services/supabase/auth.service'
 
 @Component({
   selector: 'app-auth',
@@ -20,10 +20,11 @@ export class AuthComponent implements OnInit {
   isLogin = true
   loading = false
   errorMessage = ''
+  private cdr = inject(ChangeDetectorRef);
 
   constructor(
     private fb: FormBuilder,
-    private supabase: SupabaseService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -61,22 +62,26 @@ export class AuthComponent implements OnInit {
 
     try {
       this.loading = true
-      
-      const { error } = this.isLogin
-        ? await this.supabase.signIn(email, password)
-        : await this.supabase.signUp(email, password, displayName)
 
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            throw new Error('Email or password is incorrect')
-          }
-    
-          throw error
+      const { error } = this.isLogin
+        ? await this.authService.signIn(email, password)
+        : await this.authService.signUp(email, password, displayName)
+
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          throw new Error('Email or password is incorrect')
         }
+
+        throw error
+      }
+
+      this.loading = false;
+      this.cdr.detectChanges();
       this.router.navigate(['/home'])
     } catch (err: any) {
       console.error('Authentication error:', err)
       this.errorMessage = err.message ?? 'Authentication error'
+      this.cdr.detectChanges();
     } finally {
       this.loading = false
     }

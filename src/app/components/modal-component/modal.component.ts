@@ -2,10 +2,11 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { City, LegoCharacter, Project } from '../../models/characters.model';
 import { ReactiveFormsModule } from '@angular/forms'
-import { SupabaseService } from '../../supabase/supabase.service';
 import { NotificationService, ToastType } from '../../services/notification.service';
 import { ToastComponent } from "../toast-component/toast.component";
 import { CitiesService } from '../../services/cities.service';
+import { ProjectsService } from '../../services/supabase/projects.service';
+import { CharactersService } from '../../services/supabase/characters.service';
 
 @Component({
     selector: 'app-modal',
@@ -45,7 +46,8 @@ export class ModalComponent implements OnInit, OnChanges {
 
     constructor(
         private fb: FormBuilder, 
-        private supabase: SupabaseService, 
+        private projectService: ProjectsService,
+        private characterService: CharactersService,
         private cdr: ChangeDetectorRef, 
         private notify: NotificationService, 
         public citiesService: CitiesService
@@ -109,7 +111,7 @@ export class ModalComponent implements OnInit, OnChanges {
     }
 
     loadProjects() {
-        this.supabase.getProjects().subscribe({
+        this.projectService.getProjects().subscribe({
             next: (res) => this.projects = res,
             error: (err) => console.error('Error loading projects:', err)
         });
@@ -146,7 +148,7 @@ export class ModalComponent implements OnInit, OnChanges {
         try {
             let pictureUrl = this.legoCharacterForm.get('picture')?.value;
             if (this.selectedFile) {
-                const uploadedUrl = await this.supabase.uploadCharacterAvatar(this.selectedFile);
+                const uploadedUrl = await this.characterService.uploadCharacterAvatar(this.selectedFile);
                 if (uploadedUrl) {
                     pictureUrl = uploadedUrl;
                 } else {
@@ -157,7 +159,7 @@ export class ModalComponent implements OnInit, OnChanges {
             const characterData: LegoCharacter = { ...this.legoCharacterForm.value, picture: pictureUrl };
 
             if (this.editData?.id) {
-                this.supabase.editCharacter(this.editData.id, characterData).subscribe({
+                this.characterService.editCharacter(this.editData.id, characterData).subscribe({
                     next: () => {
                         this.characterUpdated.emit();
                         this.closeModalAction();
@@ -166,7 +168,7 @@ export class ModalComponent implements OnInit, OnChanges {
                     error: (err) => console.error(err)
                 });
             } else {
-                this.supabase.createCharacter(characterData).subscribe({
+                this.characterService.createCharacter(characterData).subscribe({
                     next: () => {
                         this.characterCreated.emit();
                         this.closeModalAction();
@@ -193,14 +195,14 @@ export class ModalComponent implements OnInit, OnChanges {
             if (!projectData.end_date) projectData.end_date = null;
 
             if (this.editProject?.id) {
-                this.supabase.editProject(this.editProject.id, projectData).subscribe({
+                this.projectService.editProject(this.editProject.id, projectData).subscribe({
                     next: async () => {
                         await this.updateProjectMembers(this.editProject!.id!, member_ids);
                     },
                     error: (err) => this.handleError(err)
                 });
             } else {
-                this.supabase.createProject(projectData).subscribe({
+                this.projectService.createProject(projectData).subscribe({
                     next: async (res: any) => {
                         const newId = res.data?.[0]?.id;
                         if (newId) await this.updateProjectMembers(newId, member_ids);
@@ -215,8 +217,14 @@ export class ModalComponent implements OnInit, OnChanges {
 
     private async updateProjectMembers(projectId: string, memberIds: string[]) {
         try {
-            await this.supabase.assignMembersToProject(projectId, memberIds);
-            this.projectUpdated.emit();
+            await this.projectService.assignMembersToProject(projectId, memberIds);
+            if (this.editProject?.id) {
+                this.projectUpdated.emit();
+                this.notify.show("Project updated successfully", ToastType.SUCCESS);
+            } else {
+                this.projectCreated.emit();
+                this.notify.show("Project created successfully", ToastType.SUCCESS);
+            }
             this.closeModalAction();
         } catch (error) {
             this.handleError(error);
@@ -232,7 +240,7 @@ export class ModalComponent implements OnInit, OnChanges {
     }
 
     loadAllCharacters() {
-        this.supabase.getCharacters().subscribe(res => {
+        this.characterService.getCharacters().subscribe(res => {
             this.allCharacters = res;
             this.cdr.detectChanges();
         });

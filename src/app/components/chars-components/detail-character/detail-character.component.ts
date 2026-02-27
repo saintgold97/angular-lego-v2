@@ -3,13 +3,14 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { LegoCharacter } from "../../../models/characters.model";
 import { FavoritesService } from "../../../services/favorites.service";
 import { CommonModule } from "@angular/common";
-import { SupabaseService } from "../../../supabase/supabase.service";
 import { Observable, tap, switchMap, of, map, BehaviorSubject, combineLatest } from "rxjs";
 import { ModalComponent } from "../../modal-component/modal.component";
 import { userRoleEnum } from "../../../models/profiles.model";
 import { BreadcrumbComponent } from "../../breadcrumb-component/breadcrumb.component";
 import { NotificationService, ToastType } from "../../../services/notification.service";
 import { ToastComponent } from "../../toast-component/toast.component";
+import { ProfileService } from "../../../services/supabase/profile.service";
+import { CharactersService } from "../../../services/supabase/characters.service";
 
 @Component({
   selector: 'app-detail-character',
@@ -29,11 +30,12 @@ export class DetailCharacterComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private supabase: SupabaseService,
     private favoritesService: FavoritesService,
-    private notify: NotificationService
+    private notify: NotificationService,
+    private profileService: ProfileService,
+    private characterService: CharactersService
   ) {
-    this.userRole$ = this.supabase.getProfileRole();
+    this.userRole$ = this.profileService.getProfileRole();
   }
 
   ngOnInit() {
@@ -43,7 +45,7 @@ export class DetailCharacterComponent implements OnInit {
       map(([params, _]) => params.get('id')),
       switchMap(id => {
         if (!id) return of(null);
-        return this.supabase.getCharacterById(id);
+        return this.characterService.getCharacterById(id);
       }),
       tap(character => {
         if (character) {
@@ -90,7 +92,7 @@ export class DetailCharacterComponent implements OnInit {
 
     if (!deletedConfirm) return;
 
-    this.supabase.deleteCharacter(this.currentCharacter.id || '').subscribe({
+    this.characterService.deleteCharacter(this.currentCharacter.id || '').subscribe({
       next: () => {
         this.router.navigate(['/characters']);
         this.notify.show('Character deleted successfully!', ToastType.SUCCESS);

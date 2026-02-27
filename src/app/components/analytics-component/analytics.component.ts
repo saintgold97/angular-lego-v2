@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, HostListener } from "@angular/core";
 import { BehaviorSubject, combineLatest, from, map, Observable, shareReplay, switchMap } from "rxjs";
-import { SupabaseService } from "../../supabase/supabase.service";
 import { CommonModule } from "@angular/common";
 import { GraphComponent } from "../graph-component/graph.component";
 import { formatBusinessHeatmap, getColor, getMonthName } from "../../utils/analytics-utils";
 import { scrollTo } from "../../utils/scroll-utils";
 import { ExportService } from "../../services/export.service";
+import { DashboardService } from "../../services/supabase/dashboard.service";
 
 interface DateFilter {
     month: number;
@@ -83,7 +83,7 @@ export class AnalyticsComponent implements AfterViewInit {
         }
     };
 
-    constructor(private supabase: SupabaseService, private exportService: ExportService) {
+    constructor(private dashboardService: DashboardService, private exportService: ExportService) {
         this.loadStatistics();
         this.loadTimeAnalytics();
     }
@@ -117,7 +117,7 @@ export class AnalyticsComponent implements AfterViewInit {
 
     private loadStatistics() {
         this.stats$ = this.refreshProfile$.pipe(
-            switchMap(() => this.supabase.getGlobalDashboardStats()),
+            switchMap(() => this.dashboardService.getGlobalDashboardStats()),
             shareReplay(1)
         );
 
@@ -165,7 +165,7 @@ export class AnalyticsComponent implements AfterViewInit {
         );
 
         this.charactersRecentActivities$ = this.refreshProfile$.pipe(
-            switchMap(() => from(this.supabase.getRecentCharactersActivity())),
+            switchMap(() => from(this.dashboardService.getRecentCharactersActivity())),
             map(res => res.data),
             shareReplay(1)
         );
@@ -174,7 +174,7 @@ export class AnalyticsComponent implements AfterViewInit {
     private loadTimeAnalytics() {
         // Time logs
         const timeLogs$ = this.refreshProfile$.pipe(
-            switchMap(() => from(this.supabase.getTimeLogs())),
+            switchMap(() => from(this.dashboardService.getTimeLogs())),
             shareReplay(1)
         );
 
