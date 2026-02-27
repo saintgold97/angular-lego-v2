@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { Observable } from "rxjs";
 import { ActivityType, ActivityPriority, Activity } from "../../../models/activities.model";
 import { Project } from "../../../models/characters.model";
-import { SupabaseService } from "../../../supabase/supabase.service";
 import { CommonModule, TitleCasePipe } from "@angular/common";
+import { ActivitiesService } from "../../../services/supabase/activities.service";
+import { ProjectsService } from "../../../services/supabase/projects.service";
 
 @Component({
     selector: "app-add-activity",
@@ -22,8 +23,8 @@ export class AddActivityComponent implements OnInit {
     readonly priorities = Object.values(ActivityPriority);
     @Output() activitiesCreated = new EventEmitter<void>();
 
-    constructor(private supabase: SupabaseService, private fb: FormBuilder) {
-        this.projects$ = this.supabase.getProjects();
+    constructor(private activitiesService: ActivitiesService, private projectsService: ProjectsService, private fb: FormBuilder) {
+        this.projects$ = this.projectsService.getProjects();
     }
 
     ngOnInit() {
@@ -51,7 +52,7 @@ export class AddActivityComponent implements OnInit {
         const formData: Activity = this.activitiesForm.value;
 
         try {
-            this.supabase.createActivity(formData).subscribe({
+            this.activitiesService.createActivity(formData).subscribe({
                 next: () => {
                     this.successMessage = 'Activity created successfully!';
                     this.activitiesCreated.emit();

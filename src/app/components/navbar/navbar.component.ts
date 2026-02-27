@@ -1,9 +1,10 @@
 import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../supabase/supabase.service';
 import { Observable, from, map, switchMap, of } from 'rxjs';
 import { UserProfile } from '../../models/profiles.model';
+import { SupabaseClientService } from '../../services/supabase/supabase.client';
+import { AuthService } from '../../services/supabase/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +17,7 @@ export class NavbarComponent {
   userData: Observable<Pick<UserProfile, 'avatar_url'>>;
   imgLegoLogo = 'img/Lego_logo.png';
 
-  constructor(private user: SupabaseService, private router: Router) {
+  constructor(private user: SupabaseClientService, private authService: AuthService, private router: Router) {
     this.userData = this.user.user$.pipe(
       switchMap(authUser => {
         if (!authUser) {
@@ -92,7 +93,7 @@ export class NavbarComponent {
   }
 
   signOutHandler() {
-    this.user.signOut();
+    this.authService.signOut();
     this.router.navigate(['/']);
   };
 };

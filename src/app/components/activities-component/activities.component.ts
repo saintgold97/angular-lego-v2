@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { SupabaseService } from "../../supabase/supabase.service";
 import { HeroSectionComponent } from "../hero-section/hero-section.component";
 import { BehaviorSubject, combineLatest, Observable, of, switchMap, tap, take } from "rxjs";
 import { CommonModule } from "@angular/common";
@@ -12,6 +11,8 @@ import { FilterComponent } from "../filter-component/filter.component";
 import { ExportDataComponent } from "../export-data-component/export-data.component";
 import { ExportService } from "../../services/export.service";
 import { Activity } from "../../models/activities.model";
+import { ActivitiesService } from "../../services/supabase/activities.service";
+import { SupabaseClientService } from "../../services/supabase/supabase.client";
 
 @Component({
     selector: 'app-activities',
@@ -46,16 +47,16 @@ export class ActivitiesComponent {
     loadingExport: boolean = false;
 
 
-    constructor(private supabase: SupabaseService, private exportService: ExportService) {
+    constructor(private supabaseClientService: SupabaseClientService, private activitiesService: ActivitiesService, private exportService: ExportService) {
         this.activities$ = combineLatest([
             this.refresh$,
             this.filters$,
-            this.supabase.user$
+            this.supabaseClientService.user$
         ]).pipe(
             switchMap(([_, filters, user]) => {
                 if (!user) return of([]);
                 this.uploading = true;
-                return this.supabase.getActivities(user.id, filters.projectId, filters.date);
+                return this.activitiesService.getActivities(user.id, filters.projectId, filters.date);
             }),
             tap(() => this.uploading = false)
         );
@@ -74,7 +75,7 @@ export class ActivitiesComponent {
 
     onDeleteActivity(id: string): void {
         if (confirm('Are you sure you want to delete this activity?')) {
-            this.supabase.deleteActivity(id).subscribe({
+            this.activitiesService.deleteActivity(id).subscribe({
                 next: () => {
                     this.successMessage = 'Activity deleted successfully!';
                     this.refresh$.next();

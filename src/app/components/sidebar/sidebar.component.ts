@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { SupabaseService } from '../../supabase/supabase.service';
 import { DashboardSection, dashboardSectionEnum, userRoleEnum } from '../../models/profiles.model';
 import { Observable } from 'rxjs';
 import { ThemeSwitcherComponent } from "../theme-switcher/theme-switcher.component";
+import { ProfileService } from '../../services/supabase/profile.service';
+import { AuthService } from '../../services/supabase/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -21,8 +22,12 @@ export class SidebarComponent {
   readonly roles = userRoleEnum;
   readonly dashboardSectionEnum = dashboardSectionEnum;
 
-  constructor(private supabase: SupabaseService, private router: Router, private cd: ChangeDetectorRef) {
-    this.userRole$ = this.supabase.getProfileRole();
+  constructor(
+    private authService: AuthService, 
+    private profileService: ProfileService, 
+    private router: Router, 
+  ) {
+    this.userRole$ = this.profileService.getProfileRole();
   }
 
   private updateBodyOverflow(isOpen: boolean) {
@@ -48,7 +53,7 @@ export class SidebarComponent {
 
   async signOutHandler() {
     this.updateBodyOverflow(false);
-    await this.supabase.signOut();
+    await this.authService.signOut();
     this.router.navigate(['/']);
     document.body.style.overflow = 'auto';
   };

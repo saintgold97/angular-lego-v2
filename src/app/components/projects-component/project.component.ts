@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Project } from '../../models/characters.model';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { SupabaseService } from '../../supabase/supabase.service';
 import { HeroSectionComponent } from '../hero-section/hero-section.component';
 import { userRoleEnum } from '../../models/profiles.model';
 import { ModalComponent } from "../modal-component/modal.component";
 import { GatewaySectionComponent } from "../gateway-section/gateway-section.component";
+import { ProfileService } from '../../services/supabase/profile.service';
+import { ProjectsService } from '../../services/supabase/projects.service';
 
 @Component({
   selector: 'app-project',
@@ -22,11 +23,11 @@ export class ProjectComponent  {
   readonly roles = userRoleEnum;
   private refreshprojects$ = new BehaviorSubject<void>(undefined);
 
-  constructor(private supabase: SupabaseService) {
-    this.userRole$ = this.supabase.getProfileRole();
+  constructor(private profileService: ProfileService, private projectsService: ProjectsService) {
+    this.userRole$ = this.profileService.getProfileRole();
   
     this.projectData$ = this.refreshprojects$.pipe(
-      switchMap(() => this.supabase.getProjects()),
+      switchMap(() => this.projectsService.getProjects()),
       catchError(err => {
         console.error(err);
         return of([]);

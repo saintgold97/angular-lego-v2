@@ -4,9 +4,10 @@ import { CommonModule } from '@angular/common';
 import { Activity, ActivityPriority, ActivityType } from '../../../models/activities.model';
 import { Observable } from 'rxjs';
 import { Project } from '../../../models/characters.model';
-import { SupabaseService } from '../../../supabase/supabase.service';
 import { NotificationService, ToastType } from '../../../services/notification.service';
 import { ToastComponent } from "../../toast-component/toast.component";
+import { ActivitiesService } from '../../../services/supabase/activities.service';
+import { ProjectsService } from '../../../services/supabase/projects.service';
 
 @Component({
   selector: 'app-edit-activity',
@@ -28,8 +29,8 @@ export class EditActivityComponent implements OnChanges {
   readonly activityTypes = Object.values(ActivityType);
   readonly priorities = Object.values(ActivityPriority);
 
-  constructor(private fb: FormBuilder, private supabase: SupabaseService, private notify: NotificationService) {
-    this.projects$ = this.supabase.getProjects();
+  constructor(private fb: FormBuilder, private activitiesService: ActivitiesService, private projectsService: ProjectsService, private notify: NotificationService) {
+    this.projects$ = this.projectsService.getProjects();
     this.editForm = this.fb.group({
       project_id: ['', Validators.required],
       notes: ['', [Validators.required, Validators.minLength(5)]],
@@ -50,7 +51,7 @@ export class EditActivityComponent implements OnChanges {
     if (this.editForm.invalid || !this.activity?.id) return;
 
     this.uploading = true;
-    this.supabase.updateActivity(this.activity.id, this.editForm.value).subscribe({
+    this.activitiesService.updateActivity(this.activity.id, this.editForm.value).subscribe({
       next: () => {
         this.uploading = false;
         this.notify.show("Activity updated successfully", ToastType.SUCCESS);

@@ -1,9 +1,9 @@
 import { inject } from "@angular/core"
 import { CanActivateFn, Router } from "@angular/router"
-import { SupabaseService } from "../supabase/supabase.service"
+import { AuthService } from "../services/supabase/auth.service"
 
 export const LoginGuard: CanActivateFn = async () => {
-  const supabase = inject(SupabaseService)
+  const supabase = inject(AuthService)
   const router = inject(Router)
 
   const isLogged = await supabase.isLogged()
