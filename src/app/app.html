@@ -1,11 +1,15 @@
-@if (showNavFooter) {
-    <app-navbar />
+@if (showNavFooter()) {
+<app-navbar />
+}
+
+<main style="position: relative; min-height: 70vh">
+  @if (isLoading()) {
+  <app-loader />
   }
 
-  <main>
-    <router-outlet />
-  </main>
+  <router-outlet />
+</main>
 
-  @if (showNavFooter) {
-    <app-footer />
-  }
+@if (showNavFooter()) {
+<app-footer />
+}

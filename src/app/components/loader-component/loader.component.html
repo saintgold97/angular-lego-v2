@@ -1,0 +1,14 @@
+<div class="loader-backdrop">
+  <div class="loader-card">
+    <div class="spinner-wrapper">
+      <svg class="modern-spinner" viewBox="0 0 50 50">
+        <circle class="path-bg" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+        <circle class="path-glow" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+      </svg>
+    </div>
+    @if (message()) {
+    <span class="loader-text">{{ message() }}</span>
+    }
+  </div>
+</div>
