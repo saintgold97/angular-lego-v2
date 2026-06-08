@@ -49,7 +49,8 @@
                 <td>
                   <span class="small fw-bold">{{ profile.role }}</span>
                 </td>
-                <td class="text-end">
+                @if((userRole$ | async) === roles.ADMIN){
+                  <td class="text-end">
                   <select
                     class="form-select form-select-sm d-inline-block w-auto"
                     (change)="changeUserRole(profile.id, $event)"
@@ -68,6 +69,11 @@
                     </option>
                   </select>
                 </td>
+              } @else {
+                <td colspan="4" class="text-center">
+                  <p class="mb-0">Only the admin can change roles</p>
+                </td>
+              }
               </tr>
               }
             </tbody>

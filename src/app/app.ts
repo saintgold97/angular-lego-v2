@@ -36,19 +36,27 @@ export class App {
   constructor() {
     this.router.events.subscribe((event: any) => {
       
-      // Gestione del Loader
       if (event instanceof NavigationStart) {
-        this.isLoading.set(true);
-      } 
-      
-      else if (event instanceof NavigationEnd) {
-        // Aggiorniamo l'URL solo a navigazione conclusa con successo
-        this.currentUrl.set(event.urlAfterRedirects);
+        const currentUrlClean = this.router.url.split('#')[0].split('?')[0];
+        const targetUrlClean = event.url.split('#')[0].split('?')[0];
+        const isInternalDashboardNavigation =
+          currentUrlClean.startsWith('/dashboard') && targetUrlClean.startsWith('/dashboard');
+
+        if (!isInternalDashboardNavigation) {
+          this.isLoading.set(true);
+        }
+      }
+
+      else if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        if (event instanceof NavigationEnd) {
+          this.currentUrl.set(event.urlAfterRedirects);
+        }
+
         setTimeout(() => this.isLoading.set(false), 150);
-      } 
-      
-      else if (event instanceof NavigationCancel || event instanceof NavigationError) {
-        this.isLoading.set(false);
       }
     });
   }

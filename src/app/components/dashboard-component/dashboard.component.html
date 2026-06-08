@@ -13,19 +13,17 @@
       }
 
       <!-- Users Management -->
-      @if (activeSection === dashboardSectionEnum.ADMIN_PANEL && (userRole$ | async) ===
-      roles.ADMIN) {
+      @if (activeSection === dashboardSectionEnum.ADMIN_PANEL) { <!-- TODO Aggiugnere && (userRole$ | async) === roles.ADMIN -->
       <app-admin-panel class="animate__fadeIn" />
       }
 
       <!-- Monitoring Activities -->
-      @if (activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES && (userRole$ | async) !==
-      roles.USER) {
+      @if (activeSection === dashboardSectionEnum.MONITORING_ACTIVITIES ) { <!-- TODO Aggiungere && (userRole$ | async) !== roles.USER -->
       <app-monitoring-activities class="animate__fadeIn" />
       }
 
       <!-- Analytics -->
-      @if (activeSection === dashboardSectionEnum.ANALYTICS && (userRole$ | async) !== roles.USER) {
+      @if (activeSection === dashboardSectionEnum.ANALYTICS ) { <!-- TODO Aggiungere && (userRole$ | async) !== roles.USER -->
       <app-analytics class="animate__fadeIn" />
       }
 
