@@ -21,6 +21,7 @@ export class AuthComponent implements OnInit {
   loading = false
   errorMessage = ''
   private cdr = inject(ChangeDetectorRef);
+  loadingGuest = false
 
   constructor(
     private fb: FormBuilder,
@@ -50,6 +51,31 @@ export class AuthComponent implements OnInit {
     this.isLogin = !this.isLogin
     this.errorMessage = ''
     this.buildForm()
+  }
+
+  async loginAsGuest() {
+    // Configura qui l'utente demo creato precedentemente su Supabase
+    const GUEST_EMAIL = 'demo.lego@portfolio.com'; 
+    const GUEST_PASSWORD = 'LegoDemoUser2026!'; 
+
+    try {
+      this.loading = true;
+      this.loadingGuest = true;
+      this.errorMessage = '';
+
+      const { error } = await this.authService.signIn(GUEST_EMAIL, GUEST_PASSWORD);
+
+      if (error) throw error;
+
+      this.cdr.detectChanges();
+      this.router.navigate(['/home']);
+    } catch (err: any) {
+      console.error('Guest authentication error:', err);
+      this.errorMessage = "We're unable to access the demo at the moment. Please try again later.";
+      this.loading = false;
+      this.loadingGuest = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async onSubmit() {
