@@ -1,16 +1,47 @@
 <div class="auth">
-  <div class="auth-container">
-    <div class="container">
-      <div class="row">
-        <div class="card border-0 glass">
-          <div class="card-body">
-            <h1 class="card-title text-secondary display-5">
-              {{ isLogin ? 'Log In' : 'Sign Up' }}
-            </h1>
+  <div class="split-container">
+    <!-- FORM SIDE (Left on Desktop / Floating Card on Mobile) -->
+    <div class="auth-form-side">
+      <div class="form-content-wrapper glass">
+        <!-- LOGO / BRANDING -->
+        <div class="brand-section text-center">
+          <div class="lego-logo-placeholder">🟥</div>
+          <h1 class="brand-title">AngularLego<span>V2</span></h1>
+          <p class="brand-subtitle">Management Dashboard</p>
+        </div>
 
-            <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
-              <!-- EMAIL -->
-              <div class="form-floating mb-3">
+        <!-- DEMO QUICK ACCESS -->
+        @if (isLogin) {
+        <div class="demo-showcase-box">
+          <p class="demo-text">Want to try it instantly without signing up?</p>
+          <button
+            type="button"
+            class="btn btn-demo-guest w-100"
+            (click)="loginAsGuest()"
+            [disabled]="loading"
+          >
+            @if (loadingGuest) {
+            <span class="spinner-border spinner-border-sm me-2"></span>Entering... } @else { 🚀
+            Explore Demo as Guest }
+          </button>
+          <div class="demo-badge">Read-Only Mode Active</div>
+        </div>
+
+        <div class="auth-separator">
+          <span>or use your credentials</span>
+        </div>
+        }
+
+        <!-- AUTH FORM -->
+        <div class="card-body">
+          <h2 class="auth-mode-title text-center">
+            {{ isLogin ? 'Sign In' : 'Sign Up' }}
+          </h2>
+
+          <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+            <!-- EMAIL -->
+            <div class="form-group-custom mb-3">
+              <div class="form-floating">
                 <input
                   type="email"
                   class="form-control"
@@ -18,16 +49,17 @@
                   placeholder="name@example.com"
                   formControlName="email"
                 />
-                <label class="form-label" for="email">Email</label>
+                <label for="email">Email address</label>
               </div>
-
-              @if ( authForm.get('email')?.touched && authForm.get('email')?.invalid ) {
-              <div class="text-danger small">Please enter a valid email address</div>
+              @if (authForm.get('email')?.touched && authForm.get('email')?.invalid) {
+              <div class="error-feedback">Please enter a valid email address</div>
               }
+            </div>
 
-              <!-- DISPLAY NAME -->
-              @if(!isLogin) {
-              <div class="form-floating mb-3">
+            <!-- DISPLAY NAME (REGISTER ONLY) -->
+            @if(!isLogin) {
+            <div class="form-group-custom mb-3">
+              <div class="form-floating">
                 <input
                   type="text"
                   class="form-control"
@@ -35,12 +67,14 @@
                   placeholder="Display Name"
                   formControlName="displayName"
                 />
-                <label class="form-label" for="displayName">Display Name</label>
+                <label for="displayName">Display Name</label>
               </div>
-              }
+            </div>
+            }
 
-              <!-- PASSWORD -->
-              <div class="form-floating mb-3">
+            <!-- PASSWORD -->
+            <div class="form-group-custom mb-3">
+              <div class="form-floating">
                 <input
                   type="password"
                   class="form-control"
@@ -48,17 +82,18 @@
                   placeholder="Password"
                   formControlName="password"
                 />
-                <label class="form-label" for="password">Password</label>
+                <label for="password">Password</label>
               </div>
-
-              @if ( authForm.get('password')?.touched &&
-              authForm.get('password')?.errors?.['minlength'] ) {
-              <div class="text-danger small">Password must be at least 6 characters</div>
+              @if (authForm.get('password')?.touched &&
+              authForm.get('password')?.errors?.['minlength']) {
+              <div class="error-feedback">Password must be at least 6 characters long</div>
               }
+            </div>
 
-              <!-- CONFIRM PASSWORD (SOLO REGISTER) -->
-              @if (!isLogin) {
-              <div class="form-floating mb-3">
+            <!-- CONFIRM PASSWORD (REGISTER ONLY) -->
+            @if (!isLogin) {
+            <div class="form-group-custom mb-3">
+              <div class="form-floating">
                 <input
                   type="password"
                   class="form-control"
@@ -66,41 +101,52 @@
                   placeholder="Repeat password"
                   formControlName="confirmPassword"
                 />
-                <label class="form-label" for="confirmPassword">Repeat password</label>
+                <label for="confirmPassword">Repeat Password</label>
               </div>
-
               @if (passwordMismatch) {
-              <div class="alert alert-danger">Passwords do not match</div>
-              } }
-
-              <!-- ERROR -->
-              @if (errorMessage) {
-              <div class="alert alert-danger text-center" role="alert">
-                {{ errorMessage }}
-              </div>
+              <div class="error-feedback-alert">Passwords do not match</div>
               }
+            </div>
+            }
 
-              <!-- SUBMIT -->
-              <button
-                type="submit"
-                class="btn btn-warning w-100 my-2"
-                style="height: 60px"
-                [disabled]="authForm.invalid || loading"
-              >
-                {{ loading ? 'Loading…' : isLogin ? 'Log In' : 'Sign Up' }}
-              </button>
-            </form>
+            <!-- ERROR BANNER -->
+            @if (errorMessage) {
+            <div class="alert alert-custom-danger text-center" role="alert">
+              ⚠️ {{ errorMessage }}
+            </div>
+            }
 
-            <!-- TOGGLE -->
-            <p class="text-center text-dark mt-3">
-              @if (isLogin) { Don't have an account?
-              <a href="#" (click)="toggleMode(); $event.preventDefault()"> Sign up </a>
-              } @else { Already have an account?
-              <a href="#" (click)="toggleMode(); $event.preventDefault()"> Log in </a>
+            <!-- SUBMIT BUTTON -->
+            <button
+              type="submit"
+              class="btn btn-primary-custom w-100 mt-4"
+              [disabled]="authForm.invalid || loading"
+            >
+              @if (loading && !loadingGuest) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Processing... } @else {
+              {{ isLogin ? 'Enter Dashboard' : 'Create Account' }}
               }
-            </p>
-          </div>
+            </button>
+          </form>
+
+          <!-- SWITCH MODE TOGGLE -->
+          <p class="toggle-mode-text text-center mt-4">
+            @if (isLogin) { Don't have an account?
+            <a href="#" (click)="toggleMode(); $event.preventDefault()">Sign up now</a>
+            } @else { Already have an account?
+            <a href="#" (click)="toggleMode(); $event.preventDefault()">Sign in here</a>
+            }
+          </p>
         </div>
+      </div>
+    </div>
+
+    <!-- IMAGE SIDE (Visible only from Desktop PC onwards) -->
+    <div class="auth-image-side">
+      <div class="image-overlay"></div>
+      <div class="featured-quote">
+        <p class="quote-text">"The most powerful management tool for your brick universe."</p>
+        <p class="quote-author">- The Brick Master</p>
       </div>
     </div>
   </div>

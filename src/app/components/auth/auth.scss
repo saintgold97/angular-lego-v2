@@ -1,44 +1,299 @@
 .auth {
-    background-image: url('../../../../public/img/page-login.webp');
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    // MOBILE & TABLET FIRST: L'immagine fa da sfondo totale
+    background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%),
+        url('../../../../public/img/page-login.webp');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    height: 100vh;
-    width: auto;
 
-    .auth-container {
+    // DESKTOP PC: Rimuoviamo lo sfondo globale perché usiamo il layout diviso
+    @media (min-width: 992px) {
+        background-image: none;
+        background-color: #0f172a;
+    }
+
+    .split-container {
         display: flex;
-        height: 100%;
+        width: 100%;
+        width: 100%;
+    }
+
+    // --- AREA FORM ---
+    .auth-form-side {
+        flex: 1;
+        display: flex;
         align-items: center;
         justify-content: center;
+        padding: 20px;
+        width: 100%;
+        z-index: 2;
 
-        .card {
-            width: 90%;
-            margin: 0 auto;
+        @media (min-width: 992px) {
+            padding: 40px;
+            background-color: #0f172a; // Sfondo solido scuro solo su PC
+        }
 
-            @media screen and (min-width: 768px) {
-                width: 50%;
-            }
+        .form-content-wrapper {
+            width: 100%;
+            max-width: 450px;
+            padding: 30px 20px;
+            border-radius: 24px;
 
-            &.glass {
-                background: rgba(255, 255, 255, 0.35);
-                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-                backdrop-filter: blur(5px);
-                -webkit-backdrop-filter: blur(5px);
-                border-radius: 10px;
-                border: 1px solid rgba(255, 255, 255, 0.18);
-            }
+            // Effetto Glassmorphism (Attivo ovunque, bellissimo su Mobile con lo sfondo dietro)
+            background: rgba(30, 41, 59, 0.65);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
 
-            .card-title {
-                font-weight: 800;
-                text-align: center;
-                margin: 16px 0;
-            }
-
-            .form-label {
-                color: rgb(180, 180, 180);
-
+            @media (min-width: 992px) {
+                padding: 40px;
+                background: rgba(30, 41, 59, 0.4); // Più leggero su PC
             }
         }
+    }
+
+    // --- AREA IMMAGINE (Solo PC Desktop) ---
+    .auth-image-side {
+        display: none; // Nascosta di default su Mobile e Tablet
+
+        @media (min-width: 992px) {
+            display: block;
+            flex: 1.2;
+            position: relative;
+            background-image: url('../../../../public/img/page-login.webp');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+        }
+
+        .featured-quote {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            right: 40px;
+            color: #ffffff;
+            z-index: 2;
+
+            .quote-text {
+                font-size: 1.4rem;
+                font-weight: 600;
+                line-height: 1.4;
+                font-style: italic;
+                color: #e2e8f0;
+                margin-bottom: 10px;
+            }
+
+            .quote-author {
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #f59e0b;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        }
+    }
+
+    // --- ELEMENTI INTERNI ---
+    .brand-section {
+        margin-bottom: 25px;
+
+        .lego-logo-placeholder {
+            font-size: 2.2rem;
+            animation: bounce 2s infinite;
+        }
+
+        .brand-title {
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 8px 0 2px 0;
+
+            span {
+                color: #f59e0b;
+            }
+        }
+
+        .brand-subtitle {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+    }
+
+    .demo-showcase-box {
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px dashed rgba(245, 158, 11, 0.4);
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+        margin-bottom: 20px;
+
+        .demo-text {
+            color: #fef08a;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .btn-demo-guest {
+            background: #f59e0b;
+            color: #0f172a;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 10px;
+            border: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #d97706;
+                transform: translateY(-1px);
+            }
+        }
+
+        .demo-badge {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+
+    .auth-separator {
+        text-align: center;
+        position: relative;
+        margin: 20px 0;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        span {
+            position: relative;
+            background: #243249; // Adattato per fondersi col glass mobile
+            padding: 0 12px;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            border-radius: 10px;
+
+            @media (min-width: 992px) {
+                background: #1e293b; // Colore solido su PC
+            }
+        }
+    }
+
+    .auth-mode-title {
+        color: #ffffff;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border-radius: 12px;
+
+        &:focus {
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+        }
+    }
+
+    .form-floating>label {
+        color: #94a3b8;
+    }
+
+    .form-control:focus~label,
+    .form-control:not(:placeholder-shown)~label {
+        color: #f59e0b;
+    }
+
+    .error-feedback {
+        color: #f87171;
+        font-size: 0.75rem;
+        margin-top: 4px;
+    }
+
+    .error-feedback-alert,
+    .alert-custom-danger {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fca5a5;
+        border-radius: 12px;
+        padding: 10px;
+        font-size: 0.8rem;
+        margin-top: 8px;
+    }
+
+    .btn-primary-custom {
+        background: transparent;
+        color: #ffffff;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 12px;
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+
+    .toggle-mode-text {
+        color: #94a3b8;
+        font-size: 0.85rem;
+
+        a {
+            color: #f59e0b;
+            text-decoration: none;
+            font-weight: 600;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
     }
 }
